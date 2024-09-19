@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">GameControllerShop</string>
+    <string name="menu_home_txt">Homepage</string>
+    <string name="menu_profile_txt">Profile</string>
+    <string name="menu_history_txt">History</string>
+    <string name="menu_search_txt">Search</string>
 </resources>
