@@ -1,6 +1,5 @@
 package com.group4.gamecontrollershop;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -14,7 +13,7 @@ import com.group4.gamecontrollershop.adapter.ViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView navigationView;
-    private ViewPager2 viewPager;;
+    private ViewPager2 viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
