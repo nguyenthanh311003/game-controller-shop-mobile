@@ -2,22 +2,16 @@ package com.group4.gamecontrollershop;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.group4.gamecontrollershop.adapter.ViewPagerAdapter;
 import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
 import com.group4.gamecontrollershop.model.Product;
 
