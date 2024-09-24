@@ -5,7 +5,7 @@
         android:title="@string/menu_home_txt" />
     <item
         android:id="@+id/mSearch"
-        android:icon="@drawable/home_circle"
+        android:icon="@drawable/magnify"
         android:title="@string/menu_search_txt" />
     <item
         android:id="@+id/mHistory"
