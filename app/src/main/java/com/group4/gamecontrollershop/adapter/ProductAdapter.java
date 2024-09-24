@@ -1,6 +1,7 @@
 package com.group4.gamecontrollershop.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.group4.gamecontrollershop.GameControllerDetailActivity;
 import com.group4.gamecontrollershop.R;
 import com.group4.gamecontrollershop.model.Product;
 
@@ -38,10 +41,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.productPrice.setText("$" + String.format("%.2f", product.getNewPrice()));
         holder.productOldPrice.setText("$" + String.format("%.2f", product.getOldPrice()));
 
-        /*// Assuming the image is a URL. If it's a resource ID, you can use holder.productImage.setImageResource(product.getImage());
+        // Assuming the image is a URL. If it's a resource ID, you can use holder.productImage.setImageResource(product.getImage());
         Glide.with(context)
-                .load(product.getImage())
-                .into(holder.productImage);*/
+                .load(product.getImgUrl())
+                .into(holder.productImage);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, GameControllerDetailActivity.class);
+            intent.putExtra("product_id", product.getId());
+            context.startActivity(intent);
+        });
     }
 
     @Override

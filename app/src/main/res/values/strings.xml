@@ -4,4 +4,6 @@
     <string name="menu_profile_txt">Profile</string>
     <string name="menu_history_txt">History</string>
     <string name="menu_search_txt">Search</string>
+    <string name="decrease_quantity">Decrease quantity</string>
+    <string name="increase_quantity">Increase quantity</string>
 </resources>
