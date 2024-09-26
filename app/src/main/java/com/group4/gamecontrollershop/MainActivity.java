@@ -1,24 +1,28 @@
 package com.group4.gamecontrollershop;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toolbar;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.group4.gamecontrollershop.adapter.ViewPagerAdapter;
+import com.group4.gamecontrollershop.fragments.FragmentSearch;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView navigationView;
     private ViewPager2 viewPager;
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         navigationView = findViewById(R.id.bottomNavigationView);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         viewPager = findViewById(R.id.viewPager);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
@@ -73,22 +79,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.action_cart:
-//                openCart();
-//                return true;
-//            case R.id.action_notifications:
-//                openNotifications();
-//                return true;
-//            case R.id.action_search:
-//                openSearch();
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.action_cart) {
+            openCart();
+            return true;
+        } else if (itemId == R.id.action_notifications) {
+            openNotifications();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
 
     private void openCart() {
         // Mở Activity giỏ hàng
@@ -96,9 +106,5 @@ public class MainActivity extends AppCompatActivity {
 
     private void openNotifications() {
         // Mở Activity thông báo
-    }
-
-    private void openSearch() {
-        // Mở Activity tìm kiếm
     }
 }

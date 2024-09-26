@@ -6,4 +6,7 @@
     <string name="menu_search_txt">Search</string>
     <string name="decrease_quantity">Decrease quantity</string>
     <string name="increase_quantity">Increase quantity</string>
+    <string name="sort_by_price_descending">Highest - lowest (Price)</string>
+    <string name="sort_by_price_ascending">Lowest - highest (Price)</string>
+    <string name="sort_all_product">All</string>
 </resources>

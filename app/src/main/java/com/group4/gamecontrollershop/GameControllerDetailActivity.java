@@ -17,6 +17,8 @@ import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
 import com.group4.gamecontrollershop.fragments.FragmentHome;
 import com.group4.gamecontrollershop.model.Product;
 
+import java.text.DecimalFormat;
+
 public class GameControllerDetailActivity extends AppCompatActivity {
     private TextView productName, productDescription, productPrice;
     private ImageView productImage, productImageFirst, productImageSecond, productImageThird;
@@ -61,9 +63,9 @@ public class GameControllerDetailActivity extends AppCompatActivity {
                 productDescription.setText(product.getDescription());
                 productPrice.setText(String.valueOf(product.getNewPrice()));
                 productImage.setImageURI(Uri.parse(product.getImgUrl()));
-//                productImageFirst.setImageURI(Uri.parse(product.getDetailImgUrlFirst()));
-//                productImageSecond.setImageURI(Uri.parse(product.getDetailImgUrlSecond()));
-//                productImageThird.setImageURI(Uri.parse(product.getDetailImgUrlThird()));
+                productImageFirst.setImageURI(Uri.parse(product.getDetailImgUrlFirst()));
+                productImageSecond.setImageURI(Uri.parse(product.getDetailImgUrlSecond()));
+                productImageThird.setImageURI(Uri.parse(product.getDetailImgUrlThird()));
                 currentProductPrice = product.getNewPrice();
             }
         }
@@ -74,7 +76,9 @@ public class GameControllerDetailActivity extends AppCompatActivity {
             if (quantity > 1) {
                 quantity--;
                 double totalPrice = quantity * currentProductPrice;
-                productPrice.setText(String.valueOf(totalPrice));
+                DecimalFormat decimalFormat = new DecimalFormat("#.00");
+                String formattedPrice = decimalFormat.format(totalPrice);
+                productPrice.setText(formattedPrice);
                 tvQuantity.setText(String.valueOf(quantity));
             }
         });
@@ -84,7 +88,9 @@ public class GameControllerDetailActivity extends AppCompatActivity {
 
             quantity++;
             double totalPrice = quantity * currentProductPrice;
-            productPrice.setText(String.valueOf(totalPrice));
+            DecimalFormat decimalFormat = new DecimalFormat("#.00");
+            String formattedPrice = decimalFormat.format(totalPrice);
+            productPrice.setText(formattedPrice);
             tvQuantity.setText(String.valueOf(quantity));
         });
 
