@@ -192,6 +192,88 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return productList;
     }
 
+    public List<Product> getActiveProductsBySort(String sortOrder) {
+        List<Product> productList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor;
+
+        if (sortOrder.equals("ALL")) {
+            cursor = db.query(TABLE_PRODUCT, new String[]{
+                            PRODUCT_COLUMN_ID, PRODUCT_COLUMN_NAME, PRODUCT_COLUMN_DESCRIPTION, PRODUCT_COLUMN_IMG_URL,
+                            PRODUCT_COLUMN_DETAIL_IMG_URL_FIRST, PRODUCT_COLUMN_DETAIL_IMG_URL_SECOND, PRODUCT_COLUMN_DETAIL_IMG_URL_THIRD,
+                            PRODUCT_COLUMN_OLD_PRICE, PRODUCT_COLUMN_NEW_PRICE, PRODUCT_COLUMN_QUANTITY, PRODUCT_COLUMN_BRAND,
+                            PRODUCT_COLUMN_RELEASE_DATE, PRODUCT_COLUMN_STATUS},
+                    PRODUCT_COLUMN_STATUS + "=?", new String[]{"ACTIVE"}, null, null, null, null);
+        } else {
+            String orderBy = PRODUCT_COLUMN_NEW_PRICE + " " + sortOrder;
+
+            cursor = db.query(TABLE_PRODUCT, new String[]{
+                            PRODUCT_COLUMN_ID, PRODUCT_COLUMN_NAME, PRODUCT_COLUMN_DESCRIPTION, PRODUCT_COLUMN_IMG_URL,
+                            PRODUCT_COLUMN_DETAIL_IMG_URL_FIRST, PRODUCT_COLUMN_DETAIL_IMG_URL_SECOND, PRODUCT_COLUMN_DETAIL_IMG_URL_THIRD,
+                            PRODUCT_COLUMN_OLD_PRICE, PRODUCT_COLUMN_NEW_PRICE, PRODUCT_COLUMN_QUANTITY, PRODUCT_COLUMN_BRAND,
+                            PRODUCT_COLUMN_RELEASE_DATE, PRODUCT_COLUMN_STATUS},
+                    PRODUCT_COLUMN_STATUS + "=?", new String[]{"ACTIVE"}, null, null, orderBy, null);
+        }
+
+        if (cursor != null && cursor.moveToFirst()) {
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            do {
+                Date releaseDate = null;
+                try {
+                    releaseDate = dateFormat.parse(cursor.getString(11));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Product product = new Product(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3),
+                        cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                        cursor.getDouble(7), cursor.getDouble(8), cursor.getInt(9), cursor.getString(10),
+                        releaseDate, cursor.getString(12));
+                productList.add(product);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
+
+        return productList;
+    }
+
+    public List<Product> searchProductsByName(String productName) {
+        List<Product> productList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_PRODUCT, new String[]{
+                        PRODUCT_COLUMN_ID, PRODUCT_COLUMN_NAME, PRODUCT_COLUMN_DESCRIPTION, PRODUCT_COLUMN_IMG_URL,
+                        PRODUCT_COLUMN_DETAIL_IMG_URL_FIRST, PRODUCT_COLUMN_DETAIL_IMG_URL_SECOND, PRODUCT_COLUMN_DETAIL_IMG_URL_THIRD,
+                        PRODUCT_COLUMN_OLD_PRICE, PRODUCT_COLUMN_NEW_PRICE, PRODUCT_COLUMN_QUANTITY, PRODUCT_COLUMN_BRAND,
+                        PRODUCT_COLUMN_RELEASE_DATE, PRODUCT_COLUMN_STATUS},
+                PRODUCT_COLUMN_NAME + " LIKE ?", new String[]{"%" + productName + "%"}, null, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            do {
+                Date releaseDate = null;
+                try {
+                    releaseDate = dateFormat.parse(cursor.getString(11));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Product product = new Product(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3),
+                        cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                        cursor.getDouble(7), cursor.getDouble(8), cursor.getInt(9), cursor.getString(10),
+                        releaseDate, cursor.getString(12));
+                productList.add(product);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
+
+        return productList;
+    }
+
     public void deleteAllProducts() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_PRODUCT, null, null);
