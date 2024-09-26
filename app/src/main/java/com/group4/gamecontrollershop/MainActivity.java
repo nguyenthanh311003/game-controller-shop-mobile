@@ -1,10 +1,8 @@
 package com.group4.gamecontrollershop;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -13,12 +11,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.group4.gamecontrollershop.adapter.ViewPagerAdapter;
-import com.group4.gamecontrollershop.fragments.FragmentSearch;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView navigationView;
