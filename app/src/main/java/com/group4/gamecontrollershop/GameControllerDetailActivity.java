@@ -3,6 +3,7 @@ package com.group4.gamecontrollershop;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ public class GameControllerDetailActivity extends AppCompatActivity {
     private DatabaseHelper myDB;
     private ImageButton btnDecreaseQuantity;
     private ImageButton btnIncreaseQuantity;
+    private Button btnAddToCart;
     private ImageView btnBack;
     private TextView tvQuantity;
     private double currentProductPrice;
@@ -43,6 +45,7 @@ public class GameControllerDetailActivity extends AppCompatActivity {
         productImageThird = findViewById(R.id.ivThumbnail3);
         btnDecreaseQuantity = findViewById(R.id.btnDecreaseQuantity);
         btnIncreaseQuantity = findViewById(R.id.btnIncreaseQuantity);
+        btnAddToCart = findViewById(R.id.btnAddToCart);
         btnBack = findViewById(R.id.ivBack);
         tvQuantity = findViewById(R.id.tvQuantity);
 
@@ -98,6 +101,11 @@ public class GameControllerDetailActivity extends AppCompatActivity {
             Intent intent = new Intent(this, FragmentHome.class);
             startActivity(intent);
             finish();
+        });
+
+        btnAddToCart.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CartActivity.class);
+            startActivity(intent);
         });
     }
 }

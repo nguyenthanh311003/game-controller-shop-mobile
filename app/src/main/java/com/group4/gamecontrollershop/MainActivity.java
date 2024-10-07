@@ -1,5 +1,6 @@
 package com.group4.gamecontrollershop;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -97,7 +98,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openCart() {
-        // Mở Activity giỏ hàng
+        Intent intent = new Intent(this, CartActivity.class);
+        startActivity(intent);
     }
 
     private void openNotifications() {
