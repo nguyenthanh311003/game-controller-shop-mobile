@@ -13,6 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
 import com.group4.gamecontrollershop.fragments.FragmentHome;
 import com.group4.gamecontrollershop.model.Product;
@@ -62,11 +63,19 @@ public class GameControllerDetailActivity extends AppCompatActivity {
                 productName.setText(product.getName());
                 productDescription.setText(product.getDescription());
                 productPrice.setText(String.valueOf(product.getNewPrice()));
-                productImage.setImageURI(Uri.parse(product.getImgUrl()));
-                productImageFirst.setImageURI(Uri.parse(product.getDetailImgUrlFirst()));
-                productImageSecond.setImageURI(Uri.parse(product.getDetailImgUrlSecond()));
-                productImageThird.setImageURI(Uri.parse(product.getDetailImgUrlThird()));
                 currentProductPrice = product.getNewPrice();
+                Glide.with(this)
+                        .load(product.getImgUrl())
+                        .into(productImage);
+                Glide.with(this)
+                        .load(product.getDetailImgUrlFirst())
+                        .into(productImageFirst);
+                Glide.with(this)
+                        .load(product.getDetailImgUrlSecond())
+                        .into(productImageSecond);
+                Glide.with(this)
+                        .load(product.getDetailImgUrlThird())
+                        .into(productImageThird);
             }
         }
 

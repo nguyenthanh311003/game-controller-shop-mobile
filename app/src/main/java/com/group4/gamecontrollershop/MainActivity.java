@@ -1,5 +1,6 @@
 package com.group4.gamecontrollershop;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -91,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.action_notifications) {
             openNotifications();
             return true;
+        } else if (itemId == R.id.action_location) {
+            openLocation();
+            return true;
         } else {
             return super.onOptionsItemSelected(item);
         }
@@ -102,5 +106,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void openNotifications() {
         // Mở Activity thông báo
+    }
+
+    private void openLocation() {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
