@@ -54,24 +54,13 @@ public class FragmentHome extends Fragment {
             e.printStackTrace();
         }
 
-        Uri xboxOneSWhiteUri = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.drawable.xbox1s_white);
-        String xboxOneSWhiteUrl = xboxOneSWhiteUri.toString();
-
-        Uri xboxOneSBlackUri = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.drawable.xbox1x_red_camo);
-        String xboxOneSBlackUrl = xboxOneSBlackUri.toString();
-
-        Uri xboxOneXWhiteUri = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.drawable.xbox1x_white);
-        String xboxOneXWhiteUrl = xboxOneXWhiteUri.toString();
-
-        Uri xboxOneXBlackUri = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.drawable.xbox1x_black);
-        String xboxOneXBackUrl = xboxOneXBlackUri.toString();
-
-        Uri xboxOneXGreyCamoUri = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.drawable.xbox1s_black);
-        String xboxOneXGreyCamoUrl = xboxOneXGreyCamoUri.toString();
-
-        Uri xboxOneXBlueCamoUri = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.drawable.xbox1x_blue_camo);
-        String xboxOneXBlueCamoUrl = xboxOneXBlueCamoUri.toString();
-
+        String xboxOneSWhiteUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1s_white.jpg?alt=media&token=0a338c00-af26-4732-877e-90df25693137";
+        String xboxOneSBlackUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1s_black.jpg?alt=media&token=a4c1b9dc-ac3d-4e1f-be22-2fc249a25fda";
+        String xboxOneXWhiteUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x_white.jpg?alt=media&token=6332adc9-9caf-447e-8c6d-84022fb7d077";
+        String xboxOneXBackUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x_black.jpg?alt=media&token=256f043a-7eda-445a-9eb2-3c3cd28cd787";
+        String xboxOneXGreyCamoUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x_grey_camo.jpg?alt=media&token=942f5c77-28fd-4bc9-a04b-779947176cfb";
+        String xboxOneXBlueCamoUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x_blue_camo.jpg?alt=media&token=8f4bcb71-1f06-4b2f-877c-ca0015b2ab88";
+        String xboxOneXRedCamoUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x_red_camo.jpg?alt=media&token=ab57a9c8-1621-4967-a3e0-e5e154ffbe15";
         Product xboxOneSWhite = new Product(
                 "Xbox One S White Controller",
                 "The Xbox One S Controller is an ergonomic game pad designed for Xbox One consoles and Windows PCs. It features Bluetooth connectivity, textured grips, and responsive buttons for a comfortable and precise gaming experience. Customizable settings through the Xbox Accessories app enhance personalization for gamers.",
@@ -162,6 +151,21 @@ public class FragmentHome extends Fragment {
                 "ACTIVE"
         );
 
+        Product xboxOneXRedCamo = new Product(
+                "Xbox One X Red Camo Controller",
+                "The Xbox One S Controller is an ergonomic game pad designed for Xbox One consoles and Windows PCs. It features Bluetooth connectivity, textured grips, and responsive buttons for a comfortable and precise gaming experience. Customizable settings through the Xbox Accessories app enhance personalization for gamers.",
+                xboxOneXRedCamoUrl,
+                xboxOneXRedCamoUrl,
+                xboxOneXRedCamoUrl,
+                xboxOneXRedCamoUrl,
+                59.99,
+                7.99,
+                100,
+                "Xbox",
+                releaseDate,
+                "ACTIVE"
+        );
+
         myDB = new DatabaseHelper(getContext());
 //        myDB.insertProduct(xboxOneSBlack);
 //        myDB.insertProduct(xboxOneSWhite);
@@ -169,6 +173,7 @@ public class FragmentHome extends Fragment {
 //        myDB.insertProduct(xboxOneXBlack);
 //        myDB.insertProduct(xboxOneXBlueCamo);
 //        myDB.insertProduct(xboxOneXGreyCamo);
+//        myDB.insertProduct(xboxOneXRedCamo);
 
         loadProducts();
 
