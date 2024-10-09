@@ -16,6 +16,7 @@ import com.group4.gamecontrollershop.model.Product;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,8 +38,7 @@ public class CartActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycleView);
         tvTotalPrice = findViewById(R.id.tvProductPrice);
 
-        Uri xboxOneSWhiteUri = Uri.parse("android.resource://" + getContext().getClass() + "/" + R.drawable.xbox1s_white);
-        String xboxOneSWhiteUrl = xboxOneSWhiteUri.toString();
+        String xboxOneSWhiteUrl = "https://product.hstatic.net/200000722513/product/tay-cam-choi-gam-dareu-h105-01-trang-01_d7721a3d7ae04a1ea551f34499ddec23_grande.png";
 
         Date releaseDate = null;
         try {
@@ -46,6 +46,8 @@ public class CartActivity extends AppCompatActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        productList = new ArrayList<>();
 
         Product xboxOneSWhite = new Product(
                 "Xbox One S White Controller",
@@ -56,7 +58,7 @@ public class CartActivity extends AppCompatActivity {
                 xboxOneSWhiteUrl,
                 59.99,
                 39.99,
-                100,
+                10,
                 "Xbox",
                 releaseDate,
                 "ACTIVE"
@@ -72,7 +74,17 @@ public class CartActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(productCartAdapter);
 
-        productCartAdapter.setOnItemClickListener(this::updateTotalPrice);
+        productCartAdapter.setOnItemClickListener(new ProductCartAdapter.OnItemClickListener() {
+            @Override
+            public void onQuantityChanged() {
+                updateTotalPrice();
+            }
+
+            @Override
+            public void onItemRemoved(int position) {
+                updateTotalPrice();
+            }
+        });
         updateTotalPrice();
     }
 
@@ -81,6 +93,6 @@ public class CartActivity extends AppCompatActivity {
         for (Product product : productList) {
             totalPrice += product.getNewPrice() * product.getQuantity();
         }
-        tvTotalPrice.setText("Total: $" + String.format("%.2f", totalPrice));
+        tvTotalPrice.setText("$" + String.format("%.2f", totalPrice));
     }
 }

@@ -17,7 +17,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="134dp"
         android:layout_marginLeft="12dp"
         android:layout_weight="1"
         android:orientation="vertical">
@@ -25,7 +25,7 @@
         <TextView
             android:id="@+id/productName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
             android:text="Leset Galant"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -39,17 +39,17 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="58dp"
             android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="145dp"
-                android:layout_height="match_parent"
+                android:layout_height="58dp"
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btnPlus"
+                    android:id="@+id/btnMinus"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
@@ -64,7 +64,7 @@
                     android:textColor="#000000" />
 
                 <Button
-                    android:id="@+id/btnMinus"
+                    android:id="@+id/btnPlus"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
@@ -76,7 +76,7 @@
                 android:id="@+id/btnRemove"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="52dp"
+                android:layout_marginLeft="20dp"
                 android:background="#F44336"
                 android:text="x"
                 android:textColor="#FFFFFF" />

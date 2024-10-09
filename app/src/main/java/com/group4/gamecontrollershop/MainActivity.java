@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
     private void openCart() {
         Intent intent = new Intent(this, CartActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void openNotifications() {
