@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="bottom_nav_item_color">#000000</color>
     <color name="colorPrimary">#FF6200EE</color>
+    <color name="red">#F95454</color>
 </resources>
