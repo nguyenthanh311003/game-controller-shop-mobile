@@ -1,9 +1,6 @@
 package com.group4.gamecontrollershop;
 
-import static java.security.AccessController.getContext;
-
 import android.annotation.SuppressLint;
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.TextView;
 

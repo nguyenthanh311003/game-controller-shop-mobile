@@ -175,9 +175,8 @@ public class FragmentHome extends Fragment {
         myDB.insertProduct(xboxOneXGreyCamo);
         myDB.insertProduct(xboxOneXRedCamo);
 
-        loadProducts();
-
 //        myDB.deleteAllProducts();
+        loadProducts();
 
         return view;
     }

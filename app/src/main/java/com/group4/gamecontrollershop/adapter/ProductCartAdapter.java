@@ -81,7 +81,7 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
             btnMinus.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 Product product = productList.get(position);
-                if (product.getQuantity() > 0) {
+                if (product.getQuantity() > 1) {
                     product.setQuantity(product.getQuantity() - 1);
                     productQuantity.setText(String.valueOf(product.getQuantity()));
                     if (listener != null) {
@@ -104,7 +104,7 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
         @SuppressLint({"SetTextI18n", "CheckResult"})
         public void bind(Product product) {
             productName.setText(product.getName());
-            productPrice.setText(product.getNewPrice() + "đ");
+            productPrice.setText("$" + product.getNewPrice());
             productQuantity.setText(String.valueOf(product.getQuantity()));
             Glide.with(itemView.getContext())
                     .load(product.getImgUrl())
