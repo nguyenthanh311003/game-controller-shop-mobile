@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GameControllerShop"
         tools:targetApi="31">
+        <activity android:name=".CartActivity">
+
+        </activity>
         <meta-data
             android:name="com.paypal.sdk.clientId"
             android:value="AXIwvWt-qyVQPaXC-fwEu9iRJqXzgDgRiEvCBN1qs9ktvpGRVHvxtYW5xj3SEmcJMno1xi3sJc15dOZf" />

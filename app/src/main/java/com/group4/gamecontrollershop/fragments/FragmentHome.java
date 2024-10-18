@@ -167,13 +167,13 @@ public class FragmentHome extends Fragment {
         );
 
         myDB = new DatabaseHelper(getContext());
-        myDB.insertProduct(xboxOneSBlack);
-        myDB.insertProduct(xboxOneSWhite);
-        myDB.insertProduct(xboxOneXWhite);
-        myDB.insertProduct(xboxOneXBlack);
-        myDB.insertProduct(xboxOneXBlueCamo);
-        myDB.insertProduct(xboxOneXGreyCamo);
-        myDB.insertProduct(xboxOneXRedCamo);
+//        myDB.insertProduct(xboxOneSBlack);
+//        myDB.insertProduct(xboxOneSWhite);
+//        myDB.insertProduct(xboxOneXWhite);
+//        myDB.insertProduct(xboxOneXBlack);
+//        myDB.insertProduct(xboxOneXBlueCamo);
+//        myDB.insertProduct(xboxOneXGreyCamo);
+//        myDB.insertProduct(xboxOneXRedCamo);
 
         loadProducts();
 
