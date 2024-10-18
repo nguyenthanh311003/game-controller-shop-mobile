@@ -43,7 +43,7 @@ public class GameControllerDetailActivity extends AppCompatActivity {
 
     // PayPal Configuration
     private static PayPalConfiguration config = new PayPalConfiguration()
-            .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
+            .environment(PayPalConfiguration.ENVIRONMENT_NO_NETWORK)
             .clientId("AXIwvWt-qyVQPaXC-fwEu9iRJqXzgDgRiEvCBN1qs9ktvpGRVHvxtYW5xj3SEmcJMno1xi3sJc15dOZf");
 
     @Override
@@ -133,10 +133,10 @@ public class GameControllerDetailActivity extends AppCompatActivity {
             finish();
         });
 
-        btnAddToCart.setOnClickListener(v -> {
+        /*btnAddToCart.setOnClickListener(v -> {
             Intent intent = new Intent(this, CartActivity.class);
             startActivity(intent);
-        });
+        });*/
     }
 
     private void processPayment() {
