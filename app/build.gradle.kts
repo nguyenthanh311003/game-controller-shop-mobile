@@ -35,6 +35,7 @@ android {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.paypal.sdk:paypal-android-sdk:2.16.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation ("com.github.bumptech.glide:glide:4.12.0")

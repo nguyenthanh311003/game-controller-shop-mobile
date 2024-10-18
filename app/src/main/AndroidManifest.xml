@@ -15,6 +15,9 @@
         <activity android:name=".CartActivity">
 
         </activity>
+        <meta-data
+            android:name="com.paypal.sdk.clientId"
+            android:value="AXIwvWt-qyVQPaXC-fwEu9iRJqXzgDgRiEvCBN1qs9ktvpGRVHvxtYW5xj3SEmcJMno1xi3sJc15dOZf" />
         <activity android:name=".GameControllerDetailActivity" android:parentActivityName=".MainActivity">
 
         </activity>
