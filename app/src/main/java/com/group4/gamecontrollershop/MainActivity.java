@@ -86,7 +86,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
 
-        if (itemId == R.id.action_cart) {
+        if (itemId == R.id.favorite_action) {
+            openFavorite();
+            return true;
+        } else if (itemId == R.id.action_cart) {
             openCart();
             return true;
         } else if (itemId == R.id.action_notifications) {
@@ -98,6 +101,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void openFavorite() {
+        Intent intent = new Intent(this, FavoriteActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void openCart() {
