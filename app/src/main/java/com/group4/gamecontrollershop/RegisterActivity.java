@@ -70,7 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
             values.put("address", ""); // You can get this from the user as needed
             values.put("googleId", (Integer) null); // Google ID, if applicable
             values.put("status", "notverified"); // Default status
-            values.put("phone", ""); // Phone number if applicable
+            values.put("phone", emailStr); // Phone number if applicable
 
             long newRowId = db.insert("User", null, values);
             if (newRowId != -1) {

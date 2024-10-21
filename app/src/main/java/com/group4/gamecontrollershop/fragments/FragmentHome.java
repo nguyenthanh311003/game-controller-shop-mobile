@@ -3,6 +3,7 @@ package com.group4.gamecontrollershop.fragments;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group4.gamecontrollershop.R;
+import com.group4.gamecontrollershop.adapter.BrandAdapter;
 import com.group4.gamecontrollershop.adapter.ProductAdapter;
 import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
+import com.group4.gamecontrollershop.model.Brand;
 import com.group4.gamecontrollershop.model.Product;
 
 import java.text.ParseException;
@@ -28,7 +31,9 @@ import java.util.List;
 
 public class FragmentHome extends Fragment {
     private RecyclerView productRV;
+    private RecyclerView brandRV;
     private ProductAdapter productAdapter;
+    private BrandAdapter brandAdapter;
     private ImageButton btnSort;
     private DatabaseHelper myDB;
     private String sortStatus = "ALL";
@@ -39,6 +44,7 @@ public class FragmentHome extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         productRV = view.findViewById(R.id.productRV);
+        brandRV = view.findViewById(R.id.brandRV);
         btnSort = view.findViewById(R.id.btnSort);
         productRV.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
@@ -54,6 +60,31 @@ public class FragmentHome extends Fragment {
             e.printStackTrace();
         }
 
+        Brand xbox = new Brand("Xbox");
+        Brand eightBitDo = new Brand("8BitDo");
+        Brand sony = new Brand("Sony");
+
+        myDB = new DatabaseHelper(getContext());
+
+//        myDB.insertBrand(xbox);
+//        myDB.insertBrand(sony);
+//        myDB.insertBrand(eightBitDo);
+
+//        myDB.deleteAllBrands();
+
+        List<Brand> brands = myDB.getActiveBrands();
+
+        int xboxId = -1, eightBitDoId = -1, sonyId = -1;
+        for (Brand brand : brands) {
+            if (brand.getName().equalsIgnoreCase("Xbox")) {
+                xboxId = brand.getId();
+            } else if (brand.getName().equalsIgnoreCase("8BitDo")) {
+                eightBitDoId = brand.getId();
+            } else if (brand.getName().equalsIgnoreCase("Sony")) {
+                sonyId = brand.getId();
+            }
+        }
+
         String xboxOneSWhiteUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1s_white.jpg?alt=media&token=0a338c00-af26-4732-877e-90df25693137";
         String xboxOneSBlackUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1s_black.jpg?alt=media&token=a4c1b9dc-ac3d-4e1f-be22-2fc249a25fda";
         String xboxOneXWhiteUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x_white.jpg?alt=media&token=6332adc9-9caf-447e-8c6d-84022fb7d077";
@@ -61,6 +92,7 @@ public class FragmentHome extends Fragment {
         String xboxOneXGreyCamoUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x_grey_camo.jpg?alt=media&token=942f5c77-28fd-4bc9-a04b-779947176cfb";
         String xboxOneXBlueCamoUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x_blue_camo.jpg?alt=media&token=8f4bcb71-1f06-4b2f-877c-ca0015b2ab88";
         String xboxOneXRedCamoUrl = "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x_red_camo.jpg?alt=media&token=ab57a9c8-1621-4967-a3e0-e5e154ffbe15";
+
         Product xboxOneSWhite = new Product(
                 "Xbox One S White Controller",
                 "The Xbox One S Controller is an ergonomic game pad designed for Xbox One consoles and Windows PCs. It features Bluetooth connectivity, textured grips, and responsive buttons for a comfortable and precise gaming experience. Customizable settings through the Xbox Accessories app enhance personalization for gamers.",
@@ -71,9 +103,9 @@ public class FragmentHome extends Fragment {
                 59.99,
                 39.99,
                 100,
-                "Xbox",
                 releaseDate,
-                "ACTIVE"
+                "ACTIVE",
+                xboxId
         );
 
         Product xboxOneSBlack = new Product(
@@ -86,9 +118,9 @@ public class FragmentHome extends Fragment {
                 59.99,
                 29.99,
                 100,
-                "Xbox",
                 releaseDate,
-                "ACTIVE"
+                "ACTIVE",
+                xboxId
         );
 
         Product xboxOneXWhite = new Product(
@@ -101,9 +133,9 @@ public class FragmentHome extends Fragment {
                 59.99,
                 19.99,
                 100,
-                "Xbox",
                 releaseDate,
-                "ACTIVE"
+                "ACTIVE",
+                xboxId
         );
 
         Product xboxOneXBlack = new Product(
@@ -116,9 +148,9 @@ public class FragmentHome extends Fragment {
                 59.99,
                 9.99,
                 100,
-                "Xbox",
                 releaseDate,
-                "ACTIVE"
+                "ACTIVE",
+                xboxId
         );
 
         Product xboxOneXGreyCamo = new Product(
@@ -131,9 +163,9 @@ public class FragmentHome extends Fragment {
                 59.99,
                 8.99,
                 100,
-                "Xbox",
                 releaseDate,
-                "ACTIVE"
+                "ACTIVE",
+                xboxId
         );
 
         Product xboxOneXBlueCamo = new Product(
@@ -146,9 +178,9 @@ public class FragmentHome extends Fragment {
                 59.99,
                 7.99,
                 100,
-                "Xbox",
                 releaseDate,
-                "ACTIVE"
+                "ACTIVE",
+                xboxId
         );
 
         Product xboxOneXRedCamo = new Product(
@@ -161,12 +193,11 @@ public class FragmentHome extends Fragment {
                 59.99,
                 7.99,
                 100,
-                "Xbox",
                 releaseDate,
-                "ACTIVE"
+                "ACTIVE",
+                xboxId
         );
 
-        myDB = new DatabaseHelper(getContext());
 //        myDB.insertProduct(xboxOneSBlack);
 //        myDB.insertProduct(xboxOneSWhite);
 //        myDB.insertProduct(xboxOneXWhite);
@@ -175,9 +206,10 @@ public class FragmentHome extends Fragment {
 //        myDB.insertProduct(xboxOneXGreyCamo);
 //        myDB.insertProduct(xboxOneXRedCamo);
 
+//        myDB.deleteAllProducts();
         loadProducts();
 
-//        myDB.deleteAllProducts();
+
 
         return view;
     }
@@ -207,12 +239,21 @@ public class FragmentHome extends Fragment {
     @SuppressLint("NotifyDataSetChanged")
     private void loadProducts() {
         List<Product> productList = myDB.getActiveProductsBySort(sortStatus);
+        List<Brand> brandList = myDB.getActiveBrands();
         if (productAdapter == null) {
             productAdapter = new ProductAdapter(getContext(), productList);
             productRV.setAdapter(productAdapter);
         } else {
             productAdapter.updateProductList(productList);
             productAdapter.notifyDataSetChanged();
+        }
+
+        if (brandAdapter == null) {
+            brandAdapter = new BrandAdapter(getContext(), brandList);
+            brandRV.setAdapter(brandAdapter);
+        } else {
+            brandAdapter.updateBrandList(brandList);
+            brandAdapter.notifyDataSetChanged();
         }
     }
 }

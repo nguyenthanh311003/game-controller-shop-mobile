@@ -16,6 +16,7 @@ public class Product {
     private String brand;
     private Date releaseDate;
     private String status;
+    private int brandId;
 
     public Product() {
     }
@@ -74,6 +75,45 @@ public class Product {
         this.brand = brand;
         this.releaseDate = releaseDate;
         this.status = status;
+    }
+
+    public int getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(int brandId) {
+        this.brandId = brandId;
+    }
+
+    public Product(int id, String name, String description, String imgUrl, String detailImgUrlFirst, String detailImgUrlSecond, String detailImgUrlThird, double oldPrice, double newPrice, int quantity, Date releaseDate, String status, int brandId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.imgUrl = imgUrl;
+        this.detailImgUrlFirst = detailImgUrlFirst;
+        this.detailImgUrlSecond = detailImgUrlSecond;
+        this.detailImgUrlThird = detailImgUrlThird;
+        this.oldPrice = oldPrice;
+        this.newPrice = newPrice;
+        this.quantity = quantity;
+        this.releaseDate = releaseDate;
+        this.status = status;
+        this.brandId = brandId;
+    }
+
+    public Product(String name, String description, String imgUrl, String detailImgUrlFirst, String detailImgUrlSecond, String detailImgUrlThird, double oldPrice, double newPrice, int quantity, Date releaseDate, String status, int brandId) {
+        this.name = name;
+        this.description = description;
+        this.imgUrl = imgUrl;
+        this.detailImgUrlFirst = detailImgUrlFirst;
+        this.detailImgUrlSecond = detailImgUrlSecond;
+        this.detailImgUrlThird = detailImgUrlThird;
+        this.oldPrice = oldPrice;
+        this.newPrice = newPrice;
+        this.quantity = quantity;
+        this.releaseDate = releaseDate;
+        this.status = status;
+        this.brandId = brandId;
     }
 
     public String getDetailImgUrlFirst() {
