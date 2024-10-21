@@ -21,9 +21,19 @@ import java.util.List;
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder> {
 
     private List<Favorite> favoriteList;
+    private OnItemClickListener listener;
+
 
     public FavoriteAdapter(List<Favorite> favoriteList) {
         this.favoriteList = favoriteList;
+    }
+
+    public interface OnItemClickListener {
+        void removeInDatabase(int position);
+    }
+
+    public void setOnItemClickListener(FavoriteAdapter.OnItemClickListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -61,6 +71,9 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
                 favoriteList.remove(position);
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, favoriteList.size());
+                if (listener != null) {
+                    listener.removeInDatabase(position);
+                }
             });
         }
 

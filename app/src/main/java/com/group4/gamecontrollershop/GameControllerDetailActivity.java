@@ -16,13 +16,15 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
 import com.group4.gamecontrollershop.fragments.FragmentHome;
+import com.group4.gamecontrollershop.model.Favorite;
 import com.group4.gamecontrollershop.model.Product;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class GameControllerDetailActivity extends AppCompatActivity {
     private TextView productName, productDescription, productPrice;
-    private ImageView productImage, productImageFirst, productImageSecond, productImageThird;
+    private ImageView productImage, productImageFirst, productImageSecond, productImageThird, ivFavorite;
     private DatabaseHelper myDB;
     private ImageButton btnDecreaseQuantity;
     private ImageButton btnIncreaseQuantity;
@@ -30,6 +32,7 @@ public class GameControllerDetailActivity extends AppCompatActivity {
     private ImageView btnBack;
     private TextView tvQuantity;
     private double currentProductPrice;
+    private boolean isAlreadyFavorite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,7 @@ public class GameControllerDetailActivity extends AppCompatActivity {
         btnAddToCart = findViewById(R.id.btnAddToCart);
         btnBack = findViewById(R.id.ivBack);
         tvQuantity = findViewById(R.id.tvQuantity);
+        ivFavorite = findViewById(R.id.ivFavorite);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -116,6 +120,33 @@ public class GameControllerDetailActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CartActivity.class);
             startActivity(intent);
             finish();
+        });
+
+        int userId = 1; // Get user ID from current user
+        List<Favorite> favoriteList = myDB.getFavoriteList(userId);
+        for (Favorite favoriteItem: favoriteList) {
+            if (favoriteItem.getProduct().getId() == productId) {
+                isAlreadyFavorite = true;
+                break;
+            }
+        }
+
+        if (isAlreadyFavorite) {
+            ivFavorite.setImageResource(R.drawable.heart_fill);
+        }
+
+        ivFavorite.setOnClickListener(v -> {
+            if (isAlreadyFavorite) {
+                for (Favorite favoriteItem: favoriteList) {
+                    if (favoriteItem.getProductId() == productId && favoriteItem.getUserId() == userId) {
+                        myDB.removeFavorite(favoriteItem.getId());
+                        ivFavorite.setImageResource(R.drawable.heart_outline);
+                    }
+                }
+            } else {
+                myDB.insertFavorite(1, productId);
+                ivFavorite.setImageResource(R.drawable.heart_fill);
+            }
         });
     }
 }

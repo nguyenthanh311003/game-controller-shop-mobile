@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.group4.gamecontrollershop.model.Favorite;
+import com.group4.gamecontrollershop.model.Order;
 import com.group4.gamecontrollershop.model.Product;
 
 import java.text.ParseException;
@@ -19,8 +21,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "game_controller.db";
     private static final int DATABASE_VERSION = 2;
-
     private static final String TABLE_PRODUCT = "Product";
+    private static final String TABLE_FAVORITE = "Favorite";
     private static final String PRODUCT_COLUMN_ID = "id";
     private static final String PRODUCT_COLUMN_NAME = "name";
     private static final String PRODUCT_COLUMN_DESCRIPTION = "description";
@@ -45,8 +47,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "googleId INTEGER, " +
             "status TEXT, " +
             "phone TEXT);";
-
-
 
     private static final String CREATE_TABLE_PRODUCT = "CREATE TABLE Product (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -284,5 +284,102 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_PRODUCT, null, null);
         db.close();
     }
+
+    public void deleteAllFavorite() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_FAVORITE, null, null);
+        db.close();
+    }
+
+    public List<Favorite> getFavoriteList(int userId) {
+        List<Favorite> favoriteList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_FAVORITE, new String[]{"productId"},
+                "userId=?", new String[]{String.valueOf(userId)}, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int productId = cursor.getInt(0);
+                Product product = getProduct(productId); // Get product details from the Product table
+                if (product != null) {
+                    Favorite favorite = new Favorite(productId, userId, null, productId, product);
+                    favoriteList.add(favorite);
+                }
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
+
+        return favoriteList;
+    }
+
+    public void insertFavorite(int userId, int productId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("userId", userId);
+        values.put("productId", productId);
+
+        db.insert(TABLE_FAVORITE, null, values);
+        db.close();
+    }
+
+    public boolean removeFavorite(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_FAVORITE, "id=?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+
+    public List<Order> getAllOrders(int userId) {
+        List<Order> orderList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Update format as needed
+
+        Cursor cursor = db.query("`Order`", new String[]{"id", "totalAmount", "orderDate", "status"},
+                "userId=?", new String[]{String.valueOf(userId)}, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int orderId = cursor.getInt(0);
+                double totalAmount = cursor.getDouble(1);
+                String orderDateString = cursor.getString(2);
+                String status = cursor.getString(3);
+
+                Date orderDate = null;
+                try {
+                    orderDate = dateFormat.parse(orderDateString); // Parse the date
+                } catch (ParseException e) {
+                    e.printStackTrace(); // Handle parsing exception
+                }
+
+                Order order = new Order(orderId, userId, totalAmount, orderDate, status);
+                orderList.add(order);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
+
+        return orderList;
+    }
+
+    public void insertOrder(int userId, double totalAmount, Date orderDate, String status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        // Format the date as a string
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String orderDateString = dateFormat.format(orderDate);
+
+        values.put("userId", userId);
+        values.put("totalAmount", totalAmount);
+        values.put("orderDate", orderDateString); // Save as string in database
+        values.put("status", status);
+
+        db.insert("`Order`", null, values);
+        db.close();
+    }
+
+
 }
 

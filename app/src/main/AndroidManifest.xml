@@ -25,7 +25,7 @@
             android:name="com.paypal.sdk.clientId"
             android:value="AXIwvWt-qyVQPaXC-fwEu9iRJqXzgDgRiEvCBN1qs9ktvpGRVHvxtYW5xj3SEmcJMno1xi3sJc15dOZf" />
 
-        <activity android:name=".MainActivity"></activity>
+<!--        <activity android:name=".MainActivity"></activity>-->
         <activity
             android:name=".GameControllerDetailActivity"
             android:parentActivityName=".MainActivity"></activity>
@@ -46,7 +46,7 @@
             android:name=".RegisterActivity"
             android:parentActivityName=".LoginActivity"></activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
