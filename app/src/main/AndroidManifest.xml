@@ -34,7 +34,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".FavoriteActivity" android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".FavoriteActivity" android:parentActivityName=".MainActivity">
+
+        </activity>
 
         <activity android:name=".MapsActivity">
 
@@ -51,6 +53,10 @@
         </activity>
 
         <activity android:name=".CartActivity" android:parentActivityName=".MainActivity">
+
+        </activity>
+
+        <activity android:name=".GameControllerDetailActivity" android:parentActivityName=".MainActivity">
 
         </activity>
 
