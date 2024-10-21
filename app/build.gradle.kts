@@ -27,21 +27,26 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation ("com.google.firebase:firebase-auth:23.0.0")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.paypal.sdk:paypal-android-sdk:2.16.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.play.services.maps)
+    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,21 +16,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GameControllerShop"
         tools:targetApi="31">
+
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+
         <activity android:name=".CartActivity" android:parentActivityName=".MainActivity">
 
-        </activity>
+
         <meta-data
             android:name="com.paypal.sdk.clientId"
             android:value="AXIwvWt-qyVQPaXC-fwEu9iRJqXzgDgRiEvCBN1qs9ktvpGRVHvxtYW5xj3SEmcJMno1xi3sJc15dOZf" />
-        <activity android:name=".GameControllerDetailActivity" android:parentActivityName=".MainActivity">
 
-        </activity>
-
-        <activity android:name=".MapsActivity" >
-
-        </activity>
+        <activity android:name=".MainActivity"></activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".GameControllerDetailActivity"
+            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".MapsActivity"></activity>
+        <activity
+            android:name=".RegisterActivity"
+            android:parentActivityName=".LoginActivity"></activity>
+        <activity
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,13 +45,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_API_KEY_HERE"/>
+            android:value="YOUR_API_KEY_HERE" />
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
 </manifest>

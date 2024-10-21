@@ -37,11 +37,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_USER = "CREATE TABLE User (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "fullname TEXT, " +
             "username TEXT, " +
             "password TEXT, " +
             "avatarUrl TEXT, " +
             "address TEXT, " +
+            "googleId INTEGER, " +
+            "status TEXT, " +
             "phone TEXT);";
+
+
 
     private static final String CREATE_TABLE_PRODUCT = "CREATE TABLE Product (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
