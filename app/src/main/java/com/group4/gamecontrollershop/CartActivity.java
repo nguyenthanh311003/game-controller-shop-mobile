@@ -77,9 +77,10 @@ public class CartActivity extends AppCompatActivity {
 
         // Retrieve product ID from Game Controller Detail
         Intent cartIntent = getIntent();
-        int productId = cartIntent.getIntExtra("productId", -1);  // Default value is -1
+        int productId = cartIntent.getIntExtra("productId", -1);
+        int quantity = cartIntent.getIntExtra("quantity", 0);
         Product addedProduct = myDB.getProduct(productId);
-        addedProduct.setQuantity(1);
+        addedProduct.setQuantity(quantity);
 
         productList = new ArrayList<>();
 

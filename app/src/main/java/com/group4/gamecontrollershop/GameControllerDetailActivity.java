@@ -120,6 +120,8 @@ public class GameControllerDetailActivity extends AppCompatActivity {
         btnAddToCart.setOnClickListener(v -> {
             Intent intent = new Intent(this, CartActivity.class);
             intent.putExtra("productId", productId);
+            int quantity = Integer.parseInt(tvQuantity.getText().toString());
+            intent.putExtra("quantity", quantity);
             startActivity(intent);
             finish();
         });
