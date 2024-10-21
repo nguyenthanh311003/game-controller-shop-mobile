@@ -47,31 +47,6 @@ public class FavoriteActivity extends AppCompatActivity {
         favoriteList = myDB.getFavoriteList(userId);
 
         if (favoriteList.isEmpty()) {
-//            String xboxOneSWhiteUrl = "https://product.hstatic.net/200000722513/product/tay-cam-choi-gam-dareu-h105-01-trang-01_d7721a3d7ae04a1ea551f34499ddec23_grande.png";
-//
-//            Date releaseDate = null;
-//            try {
-//                releaseDate = dateFormat.parse("2023-08-15");
-//            } catch (ParseException e) {
-//                e.printStackTrace();
-//            }
-//
-//            Product xboxOneSWhite = new Product(
-//                    "Xbox One S White Controller",
-//                    "The Xbox One S Controller is an ergonomic game pad designed for Xbox One consoles and Windows PCs. It features Bluetooth connectivity, textured grips, and responsive buttons for a comfortable and precise gaming experience. Customizable settings through the Xbox Accessories app enhance personalization for gamers.",
-//                    xboxOneSWhiteUrl,
-//                    xboxOneSWhiteUrl,
-//                    xboxOneSWhiteUrl,
-//                    xboxOneSWhiteUrl,
-//                    59.99,
-//                    39.99,
-//                    10,
-//                    "Xbox",
-//                    releaseDate,
-//                    "ACTIVE"
-//            );
-//
-//            Favorite favorite = new Favorite(1, 1, null, 1, xboxOneSWhite);
             List<Product> products = myDB.getActiveProducts();
 
             myDB.insertFavorite(userId, products.get(0).getId());

@@ -68,12 +68,13 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
 
             heartFill.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                favoriteList.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, favoriteList.size());
                 if (listener != null) {
                     listener.removeInDatabase(position);
                 }
+
+                favoriteList.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, favoriteList.size());
             });
         }
 
