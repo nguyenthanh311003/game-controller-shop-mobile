@@ -17,9 +17,9 @@
         android:theme="@style/Theme.GameControllerShop"
         tools:targetApi="31">
 
-        <activity
-            android:name=".ProfileActivity"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".ProfileActivity"-->
+<!--            android:exported="false" />-->
 
         <meta-data
             android:name="com.paypal.sdk.clientId"
@@ -31,9 +31,15 @@
             android:parentActivityName=".MainActivity"></activity>
 
         <activity android:name=".CartActivity" android:parentActivityName=".MainActivity">
+
+
+
+
+
+
         </activity>
 
-        <activity android:name=".FavoriteActivity" android:parentActivityName=".MainActivity">
+        <activity android:name=".FavoriteActivity" android:parentActivityName=".MainActivity"></activity>
 
         <activity android:name=".MapsActivity"></activity>
         <activity
