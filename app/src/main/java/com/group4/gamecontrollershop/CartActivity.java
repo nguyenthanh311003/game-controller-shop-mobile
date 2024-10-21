@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group4.gamecontrollershop.adapter.ProductCartAdapter;
+import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
+import com.group4.gamecontrollershop.fragments.FragmentHistory;
 import com.group4.gamecontrollershop.fragments.FragmentHome;
 import com.group4.gamecontrollershop.model.Product;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
@@ -20,6 +22,8 @@ import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
+
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -36,6 +40,9 @@ public class CartActivity extends AppCompatActivity {
     private TextView tvTotalPrice;
     private ImageView ivBack;
     private static final int PAYPAL_REQUEST_CODE = 123;
+    private DatabaseHelper myDB;
+    private int userId;
+    private Double totalAmount;
 
     // PayPal Configuration
     private static PayPalConfiguration config = new PayPalConfiguration()
@@ -49,6 +56,10 @@ public class CartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_cart);
+
+        myDB = new DatabaseHelper(this);
+
+        // Add PayPal intent
         Intent intents = new Intent(this, PayPalService.class);
         intents.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         startService(intents);
@@ -70,6 +81,16 @@ public class CartActivity extends AppCompatActivity {
         }
 
         productList = new ArrayList<>();
+
+        // Retrieve product ID from Game Controller Detail
+        Intent cartIntent = getIntent();
+        int productId = cartIntent.getIntExtra("productId", -1);
+        int quantity = cartIntent.getIntExtra("quantity", 0);
+        if (productId != -1) {
+            Product addedProduct = myDB.getProduct(productId);
+            addedProduct.setQuantity(quantity);
+            productList.add(addedProduct);
+        }
 
         Product xboxOneSWhite = new Product(
                 "Xbox One S White Controller",
@@ -147,14 +168,26 @@ public class CartActivity extends AppCompatActivity {
                         String paymentDetails = confirm.toJSONObject().toString(4);
                         // Xử lý khi thanh toán thành công
                         Log.i("PaymentDetails", paymentDetails);
+
+                        // Parse payment details
+                        JSONObject jsonDetails = new JSONObject(paymentDetails);
+                        String paymentState = jsonDetails.getJSONObject("response").getString("state");
+
+                        // Store payment details to the database
+                        userId = 1; // TODO: Get user ID from current user
+                        String price = tvTotalPrice.getText().toString().replace("$", "");
+                        totalAmount = Double.parseDouble(price);
+                        myDB.insertOrder(userId, totalAmount, new Date(), "success");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.i("Payment", "User cancelled the payment.");
+                myDB.insertOrder(userId, totalAmount, new Date(), "failure");
             } else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID) {
                 Log.i("Payment", "Invalid payment or PayPalConfiguration submitted.");
+                myDB.insertOrder(userId, totalAmount, new Date(), "failure");
             }
         }
     }

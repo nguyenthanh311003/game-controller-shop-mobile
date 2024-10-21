@@ -68,11 +68,11 @@ public class MainActivity extends AppCompatActivity {
                     viewPager.setCurrentItem(1);
                 } else if (itemId == R.id.mHistory) {
                     viewPager.setCurrentItem(2);
-                } /*else if (itemId == R.id.mProfile) {
-                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                    startActivity(intent); // Start ProfileActivity
+                } else if (itemId == R.id.mProfile) {
+//                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+//                    startActivity(intent); // Start ProfileActivity
                     return true; // Return true to indicate the event was handled
-                }*/
+                }
                 return true;
             }
         });
@@ -88,7 +88,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
 
-        if (itemId == R.id.action_cart) {
+        if (itemId == R.id.favorite_action) {
+            openFavorite();
+            return true;
+        } else if (itemId == R.id.action_cart) {
             openCart();
             return true;
         } else if (itemId == R.id.action_notifications) {
@@ -100,6 +103,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void openFavorite() {
+        Intent intent = new Intent(this, FavoriteActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void openCart() {
