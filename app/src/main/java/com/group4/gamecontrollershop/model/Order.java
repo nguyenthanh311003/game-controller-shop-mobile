@@ -7,21 +7,20 @@ public class Order {
     private int id;
     private int userId;
 //    private User user;
-    private int totalAmount;
+    private Double totalAmount;
     private Date orderDate;
     private String status;
-    private List<OrderItem> orderItems;
+//    private List<OrderItem> orderItems;
 
     public Order() {
     }
 
-    public Order(int id, int userId, int totalAmount, Date orderDate, String status, List<OrderItem> orderItems) {
+    public Order(int id, int userId, Double totalAmount, Date orderDate, String status) {
         this.id = id;
         this.userId = userId;
         this.totalAmount = totalAmount;
         this.orderDate = orderDate;
         this.status = status;
-        this.orderItems = orderItems;
     }
 
     public int getId() {
@@ -40,11 +39,11 @@ public class Order {
         this.userId = userId;
     }
 
-    public int getTotalAmount() {
+    public Double getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(int totalAmount) {
+    public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
     }
 
@@ -62,13 +61,5 @@ public class Order {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
     }
 }
