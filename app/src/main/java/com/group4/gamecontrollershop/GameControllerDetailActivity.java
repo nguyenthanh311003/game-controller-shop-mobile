@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -139,8 +140,14 @@ public class GameControllerDetailActivity extends AppCompatActivity {
             if (isAlreadyFavorite) {
                 for (Favorite favoriteItem: favoriteList) {
                     if (favoriteItem.getProductId() == productId && favoriteItem.getUserId() == userId) {
-                        myDB.removeFavorite(favoriteItem.getId());
-                        ivFavorite.setImageResource(R.drawable.heart_outline);
+                        boolean isSuccess = myDB.removeFavorite(favoriteItem.getUserId(), favoriteItem.getProductId());
+                        if (isSuccess) {
+                            ivFavorite.setImageResource(R.drawable.heart_outline);
+                            Toast.makeText(this, "Remove from favorite successfully!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Can not remove from favorite", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
                     }
                 }
             } else {

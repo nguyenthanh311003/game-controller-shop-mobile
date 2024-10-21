@@ -325,11 +325,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public boolean removeFavorite(int id) {
+    public boolean removeFavorite(int userId, int productId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_FAVORITE, "id=?", new String[]{String.valueOf(id)}) > 0;
-    }
+        int affectedRows = db.delete(TABLE_FAVORITE, "userId=? AND productId=?", new String[]{String.valueOf(userId), String.valueOf(productId)});
 
+        return affectedRows > 0;
+    }
 
     public List<Order> getAllOrders(int userId) {
         List<Order> orderList = new ArrayList<>();

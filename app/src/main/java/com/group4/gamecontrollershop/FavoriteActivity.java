@@ -91,8 +91,8 @@ public class FavoriteActivity extends AppCompatActivity {
         favoriteAdapter.setOnItemClickListener(new FavoriteAdapter.OnItemClickListener() {
             @Override
             public void removeInDatabase(int position) {
-                int favoriteId = favoriteList.get(position).getId();
-                myDB.removeFavorite(favoriteId);
+                Favorite fav = favoriteList.get(position);
+                myDB.removeFavorite(fav.getUserId(), fav.getProductId());
             }
         });
 
