@@ -16,10 +16,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GameControllerShop"
         tools:targetApi="31">
+
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />
-        <activity android:name=".CartActivity"></activity>
+
+        <activity android:name=".CartActivity" android:parentActivityName=".MainActivity">
+
 
         <meta-data
             android:name="com.paypal.sdk.clientId"

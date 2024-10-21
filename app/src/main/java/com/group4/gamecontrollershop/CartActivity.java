@@ -1,7 +1,11 @@
 package com.group4.gamecontrollershop;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,8 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group4.gamecontrollershop.adapter.ProductCartAdapter;
+import com.group4.gamecontrollershop.fragments.FragmentHome;
 import com.group4.gamecontrollershop.model.Product;
+import com.paypal.android.sdk.payments.PayPalConfiguration;
+import com.paypal.android.sdk.payments.PayPalPayment;
+import com.paypal.android.sdk.payments.PayPalService;
+import com.paypal.android.sdk.payments.PaymentActivity;
+import com.paypal.android.sdk.payments.PaymentConfirmation;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +34,13 @@ public class CartActivity extends AppCompatActivity {
     private ProductCartAdapter productCartAdapter;
     private List<Product> productList;
     private TextView tvTotalPrice;
+    private ImageView ivBack;
+    private static final int PAYPAL_REQUEST_CODE = 123;
+
+    // PayPal Configuration
+    private static PayPalConfiguration config = new PayPalConfiguration()
+            .environment(PayPalConfiguration.ENVIRONMENT_NO_NETWORK)
+            .clientId("AXIwvWt-qyVQPaXC-fwEu9iRJqXzgDgRiEvCBN1qs9ktvpGRVHvxtYW5xj3SEmcJMno1xi3sJc15dOZf");
 
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -31,9 +49,16 @@ public class CartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_cart);
+        Intent intents = new Intent(this, PayPalService.class);
+        intents.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+        startService(intents);
+
+        // Sự kiện click cho nút "Add to Cart"
+        findViewById(R.id.btnAddToCart).setOnClickListener(v -> processPayment());
         
         recyclerView = findViewById(R.id.recycleView);
         tvTotalPrice = findViewById(R.id.tvProductPrice);
+        ivBack = findViewById(R.id.ivBack);
 
         String xboxOneSWhiteUrl = "https://product.hstatic.net/200000722513/product/tay-cam-choi-gam-dareu-h105-01-trang-01_d7721a3d7ae04a1ea551f34499ddec23_grande.png";
 
@@ -71,6 +96,12 @@ public class CartActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(productCartAdapter);
 
+        ivBack.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
         productCartAdapter.setOnItemClickListener(new ProductCartAdapter.OnItemClickListener() {
             @Override
             public void onQuantityChanged() {
@@ -91,5 +122,46 @@ public class CartActivity extends AppCompatActivity {
             totalPrice += product.getNewPrice() * product.getQuantity();
         }
         tvTotalPrice.setText("$" + String.format("%.2f", totalPrice));
+    }
+
+    private void processPayment() {
+        double amount = Double.parseDouble(tvTotalPrice.getText().toString().replace("$", ""));
+        PayPalPayment payment = new PayPalPayment(new BigDecimal(String.valueOf(amount)), "USD",
+                "Game Controller", PayPalPayment.PAYMENT_INTENT_SALE);
+
+        Intent intent = new Intent(this, PaymentActivity.class);
+        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
+        startActivityForResult(intent, PAYPAL_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PAYPAL_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                PaymentConfirmation confirm = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
+                if (confirm != null) {
+                    try {
+                        String paymentDetails = confirm.toJSONObject().toString(4);
+                        // Xử lý khi thanh toán thành công
+                        Log.i("PaymentDetails", paymentDetails);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Log.i("Payment", "User cancelled the payment.");
+            } else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID) {
+                Log.i("Payment", "Invalid payment or PayPalConfiguration submitted.");
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        stopService(new Intent(this, PayPalService.class));
+        super.onDestroy();
     }
 }
