@@ -9,4 +9,7 @@
     <string name="sort_by_price_descending">Highest - lowest (Price)</string>
     <string name="sort_by_price_ascending">Lowest - highest (Price)</string>
     <string name="sort_all_product">All</string>
+    <string name="client_id">789120185067-9jterrv89f1l8l56clb6bhqgjieavmf7.apps.googleusercontent.com</string>
+
+
 </resources>
