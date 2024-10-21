@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group4.gamecontrollershop.adapter.ProductCartAdapter;
+import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
 import com.group4.gamecontrollershop.fragments.FragmentHome;
 import com.group4.gamecontrollershop.model.Product;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
@@ -36,6 +37,7 @@ public class CartActivity extends AppCompatActivity {
     private TextView tvTotalPrice;
     private ImageView ivBack;
     private static final int PAYPAL_REQUEST_CODE = 123;
+    private DatabaseHelper myDB;
 
     // PayPal Configuration
     private static PayPalConfiguration config = new PayPalConfiguration()
@@ -49,6 +51,10 @@ public class CartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_cart);
+
+        myDB = new DatabaseHelper(this);
+
+        // Add PayPal intent
         Intent intents = new Intent(this, PayPalService.class);
         intents.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         startService(intents);
@@ -69,7 +75,15 @@ public class CartActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // Retrieve product ID from Game Controller Detail
+        Intent cartIntent = getIntent();
+        int productId = cartIntent.getIntExtra("productId", -1);  // Default value is -1
+        Product addedProduct = myDB.getProduct(productId);
+        addedProduct.setQuantity(1);
+
         productList = new ArrayList<>();
+
+        productList.add(addedProduct);
 
         Product xboxOneSWhite = new Product(
                 "Xbox One S White Controller",

@@ -119,6 +119,7 @@ public class GameControllerDetailActivity extends AppCompatActivity {
 
         btnAddToCart.setOnClickListener(v -> {
             Intent intent = new Intent(this, CartActivity.class);
+            intent.putExtra("productId", productId);
             startActivity(intent);
             finish();
         });
@@ -138,22 +139,20 @@ public class GameControllerDetailActivity extends AppCompatActivity {
 
         ivFavorite.setOnClickListener(v -> {
             if (isAlreadyFavorite) {
-                for (Favorite favoriteItem: favoriteList) {
-                    if (favoriteItem.getProductId() == productId && favoriteItem.getUserId() == userId) {
-                        boolean isSuccess = myDB.removeFavorite(favoriteItem.getUserId(), favoriteItem.getProductId());
-                        if (isSuccess) {
-                            ivFavorite.setImageResource(R.drawable.heart_outline);
-                            Toast.makeText(this, "Remove from favorite successfully!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(this, "Can not remove from favorite", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    }
+                Favorite favoriteItem = favoriteList.stream()
+                        .filter(item -> item.getProductId() == productId && item.getUserId() == userId)
+                        .findFirst().orElse(null);
+
+                if (favoriteItem != null) {
+                    boolean isSuccess = myDB.removeFavorite(favoriteItem.getUserId(), favoriteItem.getProductId());
+                    Toast.makeText(this, isSuccess ? "Remove from favorite successfully!" : "Cannot remove from favorite", Toast.LENGTH_SHORT).show();
+                    ivFavorite.setImageResource(isSuccess ? R.drawable.heart_outline : R.drawable.heart_fill);
                 }
             } else {
                 myDB.insertFavorite(1, productId);
                 ivFavorite.setImageResource(R.drawable.heart_fill);
             }
         });
+
     }
 }
