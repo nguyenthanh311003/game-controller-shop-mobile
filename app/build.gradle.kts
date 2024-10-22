@@ -38,6 +38,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.paypal.sdk:paypal-android-sdk:2.16.0")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation ("com.facebook.android:facebook-login:latest.release")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation ("com.github.bumptech.glide:glide:4.12.0")
