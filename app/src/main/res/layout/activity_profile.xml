@@ -26,34 +26,26 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/Iconimage2"
+                android:id="@+id/profileImage"
                 android:layout_width="105dp"
                 android:layout_height="105dp"
-                android:layout_marginTop="55dp"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp"
+                android:layout_marginTop="50dp"
                 android:layout_centerHorizontal="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_profile"
-
-            />
+                android:src="@drawable/ic_profile" />
 
 
-            <TextView
-                android:layout_below="@+id/Iconimage2"
-                android:id="@+id/username"
-                android:layout_width="match_parent"
+
+            <Button
+                android:id="@+id/uploadImageBtn"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#ffff"
-                android:gravity="center"
-                android:text="Upload avatar now"
-                android:layout_marginEnd="40dp"
+                android:layout_below="@id/profileImage"
                 android:layout_marginTop="20dp"
-                android:layout_marginStart="45dp"
-                android:layout_centerHorizontal="true"
-                android:textSize="16sp"
-                android:layout_marginBottom="20dp" />
+                android:text="Upload Image"
+                android:layout_centerHorizontal="true" />
+
+
 
         </RelativeLayout>
         <RelativeLayout

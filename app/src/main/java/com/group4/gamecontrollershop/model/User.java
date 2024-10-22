@@ -7,17 +7,19 @@ public class User {
     private String avatarUrl;
     private String address;
     private String phone;
+    private String fullname; // Add fullname field
 
     public User() {
     }
 
-    public User(int id, String username, String password, String avatarUrl, String address, String phone) {
+    public User(int id, String username, String password, String avatarUrl, String address, String phone, String fullname) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.avatarUrl = avatarUrl;
         this.address = address;
         this.phone = phone;
+        this.fullname = fullname; // Initialize fullname
     }
 
     public int getId() {
@@ -66,5 +68,13 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 }

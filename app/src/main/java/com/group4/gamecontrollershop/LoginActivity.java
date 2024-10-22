@@ -1,7 +1,9 @@
 package com.group4.gamecontrollershop;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -97,24 +99,45 @@ public class LoginActivity extends AppCompatActivity {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         auth.signInWithCredential(credential).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                // Get the user's Google ID and other details
                 String googleId = account.getId(); // Google unique ID
                 String email = account.getEmail();
                 String avatarUrl = account.getPhotoUrl() != null ? account.getPhotoUrl().toString() : "";
 
-                // Check if user exists in local DB
-                if (!isGoogleUserExists(googleId)) {
-                    // If not, insert the new user into the local database
-                    insertGoogleUser(googleId, email, avatarUrl);
-                }
+                // Check if the user exists in the local database by Google ID
+                Cursor cursor = myDB.rawQuery("SELECT id FROM User WHERE googleId = ?", new String[]{googleId});
+                if (cursor != null && cursor.moveToFirst()) {
+                    // Get the user ID from the cursor
+                    @SuppressLint("Range") String idFromCursor = cursor.getString(cursor.getColumnIndex("id"));
 
-                // Navigate to MainActivity
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finish(); // End this activity
+                    // Save user ID in SharedPreferences
+                    SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("userId", idFromCursor); // Save the ID from the database
+                    editor.apply(); // Save changes asynchronously
+
+                    cursor.close(); // Close the cursor
+
+                    // User already exists, navigate to MainActivity
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish(); // End this activity
+                } else {
+                    // User does not exist, insert into local database
+                    insertGoogleUser(googleId, email, avatarUrl);
+
+                    // Redirect to a profile setup activity
+                    Intent setupIntent = new Intent(LoginActivity.this, ProfileSetupActivity.class);
+                    startActivity(setupIntent);
+                    finish();
+                }
             } else {
                 Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
+
 
     // This method is triggered when the user clicks on the Sign Up link
     public void onSignUpClick(View view) {
@@ -132,14 +155,7 @@ public class LoginActivity extends AppCompatActivity {
         return exists;
     }
 
-    // Insert new Google user into the local database
-    private void insertGoogleUser(String googleId, String email, String avatarUrl) {
-        ContentValues values = new ContentValues();
-        values.put("googleId", googleId);
-        values.put("username", email);
-        values.put("avatarUrl", avatarUrl);
-        myDB.insert("User", null, values);
-    }
+
 
 
     private void loginUser() {
@@ -158,6 +174,16 @@ public class LoginActivity extends AppCompatActivity {
         if (cursor.moveToFirst()) {
             // Login successful
             Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+
+            // Get the user ID from the cursor
+            @SuppressLint("Range") String userId = cursor.getString(cursor.getColumnIndex("id"));
+
+            // Save user ID in SharedPreferences
+            SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("userId", userId);
+            editor.apply(); // Save changes asynchronously
+
             // Navigate to MainActivity
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
@@ -169,4 +195,17 @@ public class LoginActivity extends AppCompatActivity {
 
         cursor.close();
     }
+
+    private void insertGoogleUser(String googleId, String email, String avatarUrl) {
+        ContentValues values = new ContentValues();
+        values.put("googleId", googleId);
+        values.put("username", email); // You can use email or set a default username
+        values.put("avatarUrl", avatarUrl);
+        values.put("fullname", ""); // You can set default or leave it empty
+        values.put("address", ""); // Optional: leave empty or set default
+        values.put("status", ""); // Optional: leave empty or set default
+        values.put("phone", ""); // Optional: leave empty or set default
+        myDB.insert("User", null, values);
+    }
+
 }

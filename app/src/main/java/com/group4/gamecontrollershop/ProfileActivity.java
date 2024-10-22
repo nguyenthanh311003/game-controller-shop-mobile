@@ -1,132 +1,181 @@
 package com.group4.gamecontrollershop;
 
-import android.Manifest;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
+import com.group4.gamecontrollershop.databinding.ActivityProfileBinding;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final int PICK_IMAGE_REQUEST = 1;
-    private static final int STORAGE_PERMISSION_CODE = 100;
+    private static final int PICK_IMAGE_REQUEST = 100;
+    private static final int CAPTURE_IMAGE_REQUEST = 200;
 
-    private ImageView profileImageView;
+    private ActivityProfileBinding binding;
     private Uri imageUri;
-
-    private FirebaseUser currentUser;
     private StorageReference storageReference;
+    private ProgressDialog progressDialog;
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        binding = ActivityProfileBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        profileImageView = findViewById(R.id.Iconimage2); // Assuming this is the ImageView for the profile picture
-        ImageButton editProfileButton = findViewById(R.id.EditButton);
+        // Initialize Firebase Storage
+        storageReference = FirebaseStorage.getInstance().getReference("avatars");
+        databaseHelper = new DatabaseHelper(this); // Initialize your database helper
 
-        // Initialize Firebase references
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        storageReference = FirebaseStorage.getInstance().getReference("avatars/" + currentUser.getUid());
+        // Load the avatar image from the database
+        loadAvatarImage();
 
-        // Set an onClickListener to let the user choose an image from the gallery
-        profileImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    openImageChooser();
-                } else {
-                    requestStoragePermission();
-                }
-            }
-        });
+        // Upload Image Button
+        binding.uploadImageBtn.setOnClickListener(v -> selectImageSource());
 
-        // Set an onClickListener for editProfileButton as before
-        editProfileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+        // Set up click listeners for navigation
+        binding.BoostButton.setOnClickListener(v -> startActivity(new Intent(ProfileActivity.this, AboutActivity.class)));
+        binding.EditButton.setOnClickListener(v -> startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class)));
+        binding.SettingsButton.setOnClickListener(v -> startActivity(new Intent(ProfileActivity.this, SettingActivity.class)));
 
-    private void requestStoragePermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
-    }
+        // Get userId from SharedPreferences instead of Firebase
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("userId", null);
 
-    private void openImageChooser() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            profileImageView.setImageURI(imageUri); // Show the chosen image in the ImageView
-            uploadImageToFirebase();
+        if (userId != null) {
+            // Optionally, load more user data using userId
+            Toast.makeText(this, "User ID: " + userId, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No user ID found, please log in.", Toast.LENGTH_SHORT).show();
+            // Redirect to login activity if userId is not found
+            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 
-    private void uploadImageToFirebase() {
-        if (imageUri != null) {
-            // Upload to Firebase Storage
-            StorageReference fileReference = storageReference.child("profile.jpg");
-            fileReference.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        Toast.makeText(ProfileActivity.this, "Upload successful", Toast.LENGTH_SHORT).show();
-                        fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                            updateProfilePictureUri(uri);
-                        });
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(ProfileActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-        }
-    }
+    private void loadAvatarImage() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("userId", null);
 
-    private void updateProfilePictureUri(Uri uri) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            user.updateProfile(new FirebaseUser.ProfileChangeRequest.Builder()
-                            .setPhotoUri(uri)
-                            .build())
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(ProfileActivity.this, "Profile updated", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == STORAGE_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openImageChooser();
+        if (userId != null) {
+            String avatarUrl = databaseHelper.getUserAvatarUrl(userId);
+            if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                Glide.with(this)
+                        .load(avatarUrl)
+                        .into(binding.profileImage);
             } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                // Load default avatar or handle the absence of an avatar
+                binding.profileImage.setImageResource(R.drawable.ic_profile);
             }
+        }
+    }
+
+    private void selectImageSource() {
+        String[] options = {"Select from Gallery", "Capture from Camera"};
+        new AlertDialog.Builder(this)
+                .setTitle("Select Image Source")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        selectImageFromGallery();
+                    } else {
+                        captureImageFromCamera();
+                    }
+                })
+                .show();
+    }
+
+    private void selectImageFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    private void captureImageFromCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == PICK_IMAGE_REQUEST && data != null && data.getData() != null) {
+                imageUri = data.getData();
+                binding.profileImage.setImageURI(imageUri);
+                uploadImage(); // Automatically upload after selecting
+            } else if (requestCode == CAPTURE_IMAGE_REQUEST && data != null && data.getExtras() != null) {
+                imageUri = (Uri) data.getExtras().get("data"); // Correctly retrieve image URI from camera
+                binding.profileImage.setImageURI(imageUri);
+                uploadImage(); // Automatically upload after capturing
+            }
+        }
+    }
+
+    private void uploadImage() {
+        if (imageUri == null) {
+            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Uploading File...");
+        progressDialog.show();
+
+        // Get userId from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("userId", null);
+
+        if (userId == null) {
+            Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
+            return;
+        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CANADA);
+        String fileName = formatter.format(new Date());
+        StorageReference userProfileImageRef = storageReference.child(userId + "/" + fileName); // Save under avatars/{userId}/filename
+
+        // Lambda expressions will reference userId here, so we need it to be effectively final
+        userProfileImageRef.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> userProfileImageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                    // Save the URL in the database
+                    saveAvatarUrlToDatabase(userId, downloadUri.toString());
+                    Toast.makeText(ProfileActivity.this, "Successfully Uploaded", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                })).addOnFailureListener(e -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(ProfileActivity.this, "Failed to Upload", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void saveAvatarUrlToDatabase(String userId, String avatarUrl) {
+        boolean isUpdated = databaseHelper.updateUserAvatar(userId, avatarUrl);
+        if (isUpdated) {
+            Toast.makeText(this, "Avatar URL saved in database", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Failed to save avatar URL in database", Toast.LENGTH_SHORT).show();
         }
     }
 }
