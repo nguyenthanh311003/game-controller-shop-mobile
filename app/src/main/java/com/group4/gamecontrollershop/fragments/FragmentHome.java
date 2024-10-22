@@ -1,9 +1,7 @@
 package com.group4.gamecontrollershop.fragments;
 
 import android.annotation.SuppressLint;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -198,13 +196,16 @@ public class FragmentHome extends Fragment {
                 xboxId
         );
 
-//        myDB.insertProduct(xboxOneSBlack);
-//        myDB.insertProduct(xboxOneSWhite);
-//        myDB.insertProduct(xboxOneXWhite);
-//        myDB.insertProduct(xboxOneXBlack);
-//        myDB.insertProduct(xboxOneXBlueCamo);
-//        myDB.insertProduct(xboxOneXGreyCamo);
-//        myDB.insertProduct(xboxOneXRedCamo);
+        boolean isEmptyProducts = myDB.getActiveProductsBySort(sortStatus).isEmpty();
+        if (isEmptyProducts) {
+            myDB.insertProduct(xboxOneSBlack);
+            myDB.insertProduct(xboxOneSWhite);
+            myDB.insertProduct(xboxOneXWhite);
+            myDB.insertProduct(xboxOneXBlack);
+            myDB.insertProduct(xboxOneXBlueCamo);
+            myDB.insertProduct(xboxOneXGreyCamo);
+            myDB.insertProduct(xboxOneXRedCamo);
+        }
 
 //        myDB.deleteAllProducts();
         loadProducts();

@@ -14,9 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.group4.gamecontrollershop.adapter.ProductCartAdapter;
 import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
-import com.group4.gamecontrollershop.fragments.FragmentHistory;
-import com.group4.gamecontrollershop.fragments.FragmentHome;
-import com.group4.gamecontrollershop.model.Product;
+import com.group4.gamecontrollershop.model.CartItem;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -26,7 +24,6 @@ import com.paypal.android.sdk.payments.PaymentConfirmation;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,7 +33,7 @@ public class CartActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ProductCartAdapter productCartAdapter;
-    private List<Product> productList;
+    private List<CartItem> cartItemList = new ArrayList<>();
     private TextView tvTotalPrice;
     private ImageView ivBack;
     private static final int PAYPAL_REQUEST_CODE = 123;
@@ -71,49 +68,10 @@ public class CartActivity extends AppCompatActivity {
         tvTotalPrice = findViewById(R.id.tvProductPrice);
         ivBack = findViewById(R.id.ivBack);
 
-        String xboxOneSWhiteUrl = "https://product.hstatic.net/200000722513/product/tay-cam-choi-gam-dareu-h105-01-trang-01_d7721a3d7ae04a1ea551f34499ddec23_grande.png";
+        int userId = 1; // TODO: Get user ID from current user
+        cartItemList = myDB.getCartItems(userId);
 
-        Date releaseDate = null;
-        try {
-            releaseDate = dateFormat.parse("2023-08-15");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        productList = new ArrayList<>();
-
-        // Retrieve product ID from Game Controller Detail
-        Intent cartIntent = getIntent();
-        int productId = cartIntent.getIntExtra("productId", -1);
-        int quantity = cartIntent.getIntExtra("quantity", 0);
-        if (productId != -1) {
-            Product addedProduct = myDB.getProduct(productId);
-            addedProduct.setQuantity(quantity);
-            productList.add(addedProduct);
-        }
-
-        Product xboxOneSWhite = new Product(
-                "Xbox One S White Controller",
-                "The Xbox One S Controller is an ergonomic game pad designed for Xbox One consoles and Windows PCs. It features Bluetooth connectivity, textured grips, and responsive buttons for a comfortable and precise gaming experience. Customizable settings through the Xbox Accessories app enhance personalization for gamers.",
-                xboxOneSWhiteUrl,
-                xboxOneSWhiteUrl,
-                xboxOneSWhiteUrl,
-                xboxOneSWhiteUrl,
-                59.99,
-                39.99,
-                10,
-                "Xbox",
-                releaseDate,
-                "ACTIVE"
-        );
-
-        productList.add(xboxOneSWhite);
-        productList.add(xboxOneSWhite);
-        productList.add(xboxOneSWhite);
-        productList.add(xboxOneSWhite);
-        productList.add(xboxOneSWhite);
-
-        productCartAdapter = new ProductCartAdapter(productList);
+        productCartAdapter = new ProductCartAdapter(cartItemList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(productCartAdapter);
 
@@ -125,13 +83,17 @@ public class CartActivity extends AppCompatActivity {
 
         productCartAdapter.setOnItemClickListener(new ProductCartAdapter.OnItemClickListener() {
             @Override
-            public void onQuantityChanged() {
+            public void onQuantityChanged(int position) {
                 updateTotalPrice();
+                CartItem cartItem = cartItemList.get(position);
+                myDB.updateCartItem(cartItem.getId(), cartItem.getQuantity());
             }
 
             @Override
             public void onItemRemoved(int position) {
                 updateTotalPrice();
+                CartItem cartItem = cartItemList.get(position);
+                myDB.deleteCartItem(userId, cartItem.getProductId());
             }
         });
         updateTotalPrice();
@@ -139,8 +101,8 @@ public class CartActivity extends AppCompatActivity {
 
     private void updateTotalPrice() {
         double totalPrice = 0.0;
-        for (Product product : productList) {
-            totalPrice += product.getNewPrice() * product.getQuantity();
+        for (CartItem cartItem: cartItemList) {
+            totalPrice += cartItem.getProduct().getNewPrice() * cartItem.getQuantity();
         }
         tvTotalPrice.setText("$" + String.format("%.2f", totalPrice));
     }

@@ -13,21 +13,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.group4.gamecontrollershop.R;
-import com.group4.gamecontrollershop.model.Product;
+import com.group4.gamecontrollershop.model.CartItem;
 
 import java.util.List;
 
 public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.ProductViewHolder> {
 
-    private List<Product> productList;
+    private List<CartItem> cartItemList;
     private OnItemClickListener listener;
 
-    public ProductCartAdapter(List<Product> productList) {
-        this.productList = productList;
+    public ProductCartAdapter(List<CartItem> cartItemList) {
+        this.cartItemList = cartItemList;
     }
 
     public interface OnItemClickListener {
-        void onQuantityChanged();
+        void onQuantityChanged(int position);
         void onItemRemoved(int position);
     }
 
@@ -44,13 +44,13 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        Product product = productList.get(position);
-        holder.bind(product);
+        CartItem cartItem = cartItemList.get(position);
+        holder.bind(cartItem);
     }
 
     @Override
     public int getItemCount() {
-        return productList.size();
+        return cartItemList.size();
     }
 
     class ProductViewHolder extends RecyclerView.ViewHolder {
@@ -70,46 +70,47 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
 
             btnPlus.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                Product product = productList.get(position);
-                product.setQuantity(product.getQuantity() + 1);
-                productQuantity.setText(String.valueOf(product.getQuantity()));
+                CartItem cartItem = cartItemList.get(position);
+                cartItem.setQuantity(cartItem.getQuantity() + 1);
+                productQuantity.setText(String.valueOf(cartItem.getQuantity()));
                 if (listener != null) {
-                    listener.onQuantityChanged();
+                    listener.onQuantityChanged(position);
                 }
             });
 
             btnMinus.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                Product product = productList.get(position);
-                if (product.getQuantity() > 1) {
-                    product.setQuantity(product.getQuantity() - 1);
-                    productQuantity.setText(String.valueOf(product.getQuantity()));
+                CartItem cartItem = cartItemList.get(position);
+                if (cartItem.getQuantity() > 1) {
+                    cartItem.setQuantity(cartItem.getQuantity() - 1);
+                    productQuantity.setText(String.valueOf(cartItem.getQuantity()));
                     if (listener != null) {
-                        listener.onQuantityChanged();
+                        listener.onQuantityChanged(position);
                     }
                 }
             });
 
             btnRemove.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                productList.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, productList.size());
                 if (listener != null) {
                     listener.onItemRemoved(position);
                 }
+                cartItemList.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, cartItemList.size());
             });
         }
 
         @SuppressLint({"SetTextI18n", "CheckResult"})
-        public void bind(Product product) {
-            productName.setText(product.getName());
-            productPrice.setText("$" + product.getNewPrice());
-            productQuantity.setText(String.valueOf(product.getQuantity()));
-            Glide.with(itemView.getContext())
-                    .load(product.getImgUrl())
-                    .into(productImage);
+        public void bind(CartItem cartItem) {
+            if (cartItem.getProduct() == null) return;
 
+            productName.setText(cartItem.getProduct().getName());
+            productPrice.setText("$" + cartItem.getProduct().getNewPrice());
+            productQuantity.setText(String.valueOf(cartItem.getQuantity()));
+            Glide.with(itemView.getContext())
+                    .load(cartItem.getProduct().getImgUrl())
+                    .into(productImage);
         }
     }
 }

@@ -118,10 +118,10 @@ public class GameControllerDetailActivity extends AppCompatActivity {
         });
 
         btnAddToCart.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CartActivity.class);
-            intent.putExtra("productId", productId);
+            int userId = 1; // TODO: Get user ID from current user
             int quantity = Integer.parseInt(tvQuantity.getText().toString());
-            intent.putExtra("quantity", quantity);
+            myDB.insertCartItem(userId, productId, quantity);
+            Intent intent = new Intent(this, CartActivity.class);
             startActivity(intent);
             finish();
         });
