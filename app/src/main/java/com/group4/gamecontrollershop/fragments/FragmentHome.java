@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group4.gamecontrollershop.R;
@@ -45,6 +47,11 @@ public class FragmentHome extends Fragment {
         brandRV = view.findViewById(R.id.brandRV);
         btnSort = view.findViewById(R.id.btnSort);
         productRV.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        brandRV.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        brandRV.setLayoutManager(layoutManager);
+//        LinearSnapHelper snapHelper = new LinearSnapHelper();
+//        snapHelper.attachToRecyclerView(brandRV);
 
         btnSort.setOnClickListener(v -> showSortMenu(v));
 
@@ -61,18 +68,42 @@ public class FragmentHome extends Fragment {
         Brand xbox = new Brand("Xbox");
         Brand eightBitDo = new Brand("8BitDo");
         Brand sony = new Brand("Sony");
+        Brand nintendo = new Brand("Nintendo");
+        Brand razer = new Brand("Razer");
+        Brand logitech = new Brand("Logitech");
+        Brand steelSeries = new Brand("SteelSeries");
+        Brand astro = new Brand("Astro");
+        Brand thrustmaster = new Brand("Thrustmaster");
+        Brand hori = new Brand("Hori");
 
         myDB = new DatabaseHelper(getContext());
 
 //        myDB.insertBrand(xbox);
 //        myDB.insertBrand(sony);
 //        myDB.insertBrand(eightBitDo);
+//        myDB.insertBrand(nintendo);
+//        myDB.insertBrand(razer);
+//        myDB.insertBrand(logitech);
+//        myDB.insertBrand(steelSeries);
+//        myDB.insertBrand(astro);
+//        myDB.insertBrand(thrustmaster);
+//        myDB.insertBrand(hori);
 
 //        myDB.deleteAllBrands();
 
         List<Brand> brands = myDB.getActiveBrands();
 
-        int xboxId = -1, eightBitDoId = -1, sonyId = -1;
+        int xboxId = -1,
+            eightBitDoId = -1,
+            sonyId = -1,
+            nintendoId = -1,
+            razerId = -1,
+            logitechId = -1,
+            steelSeriesId = -1,
+            astroId = -1,
+            thrustmasterId = -1,
+            horiId = -1;
+
         for (Brand brand : brands) {
             if (brand.getName().equalsIgnoreCase("Xbox")) {
                 xboxId = brand.getId();
@@ -80,6 +111,20 @@ public class FragmentHome extends Fragment {
                 eightBitDoId = brand.getId();
             } else if (brand.getName().equalsIgnoreCase("Sony")) {
                 sonyId = brand.getId();
+            } else if (brand.getName().equalsIgnoreCase("Nintendo")) {
+                nintendoId = brand.getId();
+            } else if (brand.getName().equalsIgnoreCase("Razer")) {
+                razerId = brand.getId();
+            } else if (brand.getName().equalsIgnoreCase("Logitech")) {
+                logitechId = brand.getId();
+            } else if (brand.getName().equalsIgnoreCase("SteelSeries")) {
+                steelSeriesId = brand.getId();
+            } else if (brand.getName().equalsIgnoreCase("Astro")) {
+                astroId = brand.getId();
+            } else if (brand.getName().equalsIgnoreCase("Thrustmaster")) {
+                thrustmasterId = brand.getId();
+            } else if (brand.getName().equalsIgnoreCase("Hori")) {
+                horiId = brand.getId();
             }
         }
 
@@ -118,7 +163,7 @@ public class FragmentHome extends Fragment {
                 100,
                 releaseDate,
                 "ACTIVE",
-                xboxId
+                eightBitDoId
         );
 
         Product xboxOneXWhite = new Product(
@@ -133,7 +178,7 @@ public class FragmentHome extends Fragment {
                 100,
                 releaseDate,
                 "ACTIVE",
-                xboxId
+                sonyId
         );
 
         Product xboxOneXBlack = new Product(
@@ -148,7 +193,7 @@ public class FragmentHome extends Fragment {
                 100,
                 releaseDate,
                 "ACTIVE",
-                xboxId
+                nintendoId
         );
 
         Product xboxOneXGreyCamo = new Product(
@@ -210,7 +255,8 @@ public class FragmentHome extends Fragment {
 //        myDB.deleteAllProducts();
         loadProducts();
 
-
+        brandAdapter = new BrandAdapter(getContext(), brands, this::loadProductsByBrandId);
+        brandRV.setAdapter(brandAdapter);
 
         return view;
     }
@@ -248,13 +294,12 @@ public class FragmentHome extends Fragment {
             productAdapter.updateProductList(productList);
             productAdapter.notifyDataSetChanged();
         }
+    }
 
-        if (brandAdapter == null) {
-            brandAdapter = new BrandAdapter(getContext(), brandList);
-            brandRV.setAdapter(brandAdapter);
-        } else {
-            brandAdapter.updateBrandList(brandList);
-            brandAdapter.notifyDataSetChanged();
-        }
+    @SuppressLint("NotifyDataSetChanged")
+    private void loadProductsByBrandId(Brand brand) {
+        List<Product> productList = myDB.getActiveProductsByBrandId(brand.getId());
+        productAdapter.updateProductList(productList);
+        productAdapter.notifyDataSetChanged();
     }
 }

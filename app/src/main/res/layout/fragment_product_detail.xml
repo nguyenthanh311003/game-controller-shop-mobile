@@ -88,6 +88,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Available Quantity -->
+    <TextView
+        android:id="@+id/tvAvailableQuantity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Available: 10"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- Product Description -->
     <TextView
         android:id="@+id/tvProductDescription"
@@ -96,7 +109,7 @@
         android:layout_margin="16dp"
         android:text="The inspiration for the design of this chair comes from the industrial style of the first half of the last century, which is complemented by the most modern features."
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@+id/tvProductName"
+        app:layout_constraintTop_toBottomOf="@+id/tvAvailableQuantity"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
