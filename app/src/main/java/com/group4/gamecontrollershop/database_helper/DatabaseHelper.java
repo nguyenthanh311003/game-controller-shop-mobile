@@ -352,6 +352,53 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return brandList;
     }
 
+    public List<Product> getActiveProductsByBrandId(int brandId) {
+        List<Product> productList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_PRODUCT, new String[]{
+                        PRODUCT_COLUMN_ID, PRODUCT_COLUMN_NAME, PRODUCT_COLUMN_DESCRIPTION, PRODUCT_COLUMN_IMG_URL,
+                        PRODUCT_COLUMN_DETAIL_IMG_URL_FIRST, PRODUCT_COLUMN_DETAIL_IMG_URL_SECOND, PRODUCT_COLUMN_DETAIL_IMG_URL_THIRD,
+                        PRODUCT_COLUMN_OLD_PRICE, PRODUCT_COLUMN_NEW_PRICE, PRODUCT_COLUMN_QUANTITY, PRODUCT_COLUMN_BRAND_ID,
+                        PRODUCT_COLUMN_RELEASE_DATE, PRODUCT_COLUMN_STATUS},
+                PRODUCT_COLUMN_STATUS + "=? AND " + PRODUCT_COLUMN_BRAND_ID + "=?",
+                new String[]{"ACTIVE", String.valueOf(brandId)}, null, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            do {
+                Date releaseDate = null;
+                try {
+                    releaseDate = dateFormat.parse(cursor.getString(11));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Product product = new Product(
+                        cursor.getInt(0), // id
+                        cursor.getString(1), // name
+                        cursor.getString(2), // description
+                        cursor.getString(3), // imgUrl
+                        cursor.getString(4), // detailImgUrlFirst
+                        cursor.getString(5), // detailImgUrlSecond
+                        cursor.getString(6), // detailImgUrlThird
+                        cursor.getDouble(7), // oldPrice
+                        cursor.getDouble(8), // newPrice
+                        cursor.getInt(9), // quantity
+                        releaseDate, // releaseDate
+                        cursor.getString(12), // status
+                        cursor.getInt(10) // brandId
+                );
+                productList.add(product);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
+
+        return productList;
+    }
+
     public void deleteAllBrands() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_BRAND, null, null);
