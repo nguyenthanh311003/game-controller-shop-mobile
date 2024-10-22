@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.group4.gamecontrollershop.model.Brand;
+import com.group4.gamecontrollershop.model.CartItem;
 import com.group4.gamecontrollershop.model.Favorite;
 import com.group4.gamecontrollershop.model.Order;
 import com.group4.gamecontrollershop.model.Product;
@@ -26,6 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //product
     private static final String TABLE_PRODUCT = "Product";
     private static final String TABLE_FAVORITE = "Favorite";
+    private static final String TABLE_CART = "Cart";
     private static final String PRODUCT_COLUMN_ID = "id";
     private static final String PRODUCT_COLUMN_NAME = "name";
     private static final String PRODUCT_COLUMN_DESCRIPTION = "description";
@@ -44,6 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_BRAND = "Brand";
     private static final String BRAND_COLUMN_ID = "id";
     private static final String BRAND_COLUMN_NAME = "name";
+
 
     private static final String CREATE_TABLE_USER = "CREATE TABLE User (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -100,6 +103,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "FOREIGN KEY(userId) REFERENCES User(id), " +
             "FOREIGN KEY(productId) REFERENCES Product(id));";
 
+    private static final String CREATE_TABLE_CART = "CREATE TABLE Cart (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "userId INTEGER, " +
+            "productId INTEGER, " +
+            "quantity INTEGER, " +
+            "FOREIGN KEY(userId) REFERENCES User(id), " +
+            "FOREIGN KEY(productId) REFERENCES Product(id));";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -112,6 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_ORDER);
         db.execSQL(CREATE_TABLE_ORDER_ITEM);
         db.execSQL(CREATE_TABLE_FAVORITE);
+        db.execSQL(CREATE_TABLE_CART);
     }
 
     @Override
@@ -123,6 +135,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS Product");
         db.execSQL("DROP TABLE IF EXISTS Brand");
         db.execSQL("DROP TABLE IF EXISTS User");
+        db.execSQL("DROP TABLE IF EXISTS Cart");
 
         // Tạo lại các bảng mới
         onCreate(db);
@@ -441,6 +454,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    // Cart
+    public void insertCartItem(int userId, int productId, int quantity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("userId", userId);
+        values.put("productId", productId);
+        values.put("quantity", quantity);
+        db.insert("Cart", null, values);
+        db.close();
+    }
+
+    public List<CartItem> getCartItems(int userId) {
+        List<CartItem> cartItems = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("Cart", new String[]{"id", "productId", "quantity"},
+                "userId=?", new String[]{String.valueOf(userId)}, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(0);
+                int productId = cursor.getInt(1);
+                int quantity = cursor.getInt(2);
+                cartItems.add(new CartItem(id, userId, null, productId, getProduct(productId), quantity));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return cartItems;
+    }
+
+    public void updateCartItem(int cartItemId, int quantity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("quantity", quantity);
+        db.update("Cart", values, "id=?", new String[]{String.valueOf(cartItemId)});
+        db.close();
+    }
+
+    public boolean deleteCartItem(int userId, int productId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int affectedRows = db.delete("Cart", "userId=? AND productId=?", new String[]{String.valueOf(userId), String.valueOf(productId)});
+        db.close();
+        return affectedRows > 0;
+    }
 
 }
 
