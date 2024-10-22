@@ -577,7 +577,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result > 0; // Returns true if at least one row was updated
     }
 
-    public boolean insertUserProfile(String fullName, String username, String phone, String avatarUrl) {
+    public int insertUserProfile(String googleId, String fullName, String username, String phone, String avatarUrl) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("fullname", fullName);
@@ -585,9 +585,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("phone", phone);
         contentValues.put("avatarUrl", avatarUrl); // Include avatar URL in insert
 
-        long result = db.insert("User", null, contentValues);
-        return result != -1; // Returns true if the insert was successful
+        // Check if the user already exists by googleId
+        if (isGoogleUserExists(googleId)) {
+            // Update the existing user record
+            int rowsAffected = db.update("User", contentValues, "googleId = ?", new String[]{googleId});
+            return rowsAffected > 0 ? getUserIdByGoogleId(googleId) : -1; // Return user ID if updated, otherwise -1
+        } else {
+            // Insert a new user record
+            contentValues.put("googleId", googleId); // Add googleId to content values
+            long result = db.insert("User", null, contentValues);
+            return result != -1 ? (int) result : -1; // Return the inserted ID cast to int, or -1 if failed
+        }
     }
+
+    // Helper method to get user ID by Google ID
+    private int getUserIdByGoogleId(String googleId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("User", new String[]{"id"}, "googleId = ?", new String[]{googleId}, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            @SuppressLint("Range") int userId = cursor.getInt(cursor.getColumnIndex("id"));
+            cursor.close();
+            return userId; // Return the found user ID
+        }
+        return -1; // Return -1 if user ID not found
+    }
+
+    // Helper method to check if the user exists based on googleId
+    private boolean isGoogleUserExists(String googleId) {
+        String query = "SELECT * FROM User WHERE googleId = ?";
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{googleId});
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+
+
+
+
+
 
 
 

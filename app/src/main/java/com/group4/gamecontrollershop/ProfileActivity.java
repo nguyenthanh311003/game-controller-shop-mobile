@@ -3,11 +3,14 @@ package com.group4.gamecontrollershop;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,13 +25,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
 import com.group4.gamecontrollershop.databinding.ActivityProfileBinding;
+import android.Manifest; // This is necessary for using the Manifest.permission constants
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public class ProfileActivity extends AppCompatActivity {
-
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 300;
     private static final int PICK_IMAGE_REQUEST = 100;
     private static final int CAPTURE_IMAGE_REQUEST = 200;
 
@@ -178,4 +182,26 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to save avatar URL in database", Toast.LENGTH_SHORT).show();
         }
     }
+    private boolean checkCameraPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestCameraPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, now you can capture the image
+                captureImageFromCamera();
+            } else {
+                // Permission denied, show a message to the user
+                Toast.makeText(this, "Camera permission is required to capture images.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 }
