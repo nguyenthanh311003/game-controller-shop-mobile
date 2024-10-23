@@ -12,6 +12,7 @@ import com.group4.gamecontrollershop.model.CartItem;
 import com.group4.gamecontrollershop.model.Favorite;
 import com.group4.gamecontrollershop.model.Order;
 import com.group4.gamecontrollershop.model.Product;
+import com.group4.gamecontrollershop.model.User;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "password TEXT, " +
             "avatarUrl TEXT, " +
             "address TEXT, " +
-            "googleId INTEGER, " +
+            "googleId TEXT, " +
             "status TEXT, " +
             "phone TEXT);";
 
@@ -545,6 +546,132 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return affectedRows > 0;
     }
+
+
+    public boolean updateUserAvatar(String userId, String avatarUrl) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("avatarUrl", avatarUrl);
+
+        // Update the avatar URL where the id matches (not googleId)
+        int result = db.update("User", contentValues, "id = ?", new String[]{userId});
+        db.close();
+        return result > 0; // Returns true if at least one row was updated
+    }
+
+
+
+    public String getUserAvatarUrl(String userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String avatarUrl = null; // Initialize avatarUrl to null
+
+        // Define the columns to fetch
+        String[] columns = {"avatarUrl"};
+
+        // Perform the query using the structured query() method
+        Cursor cursor = db.query("User", columns, "id=?", new String[]{userId}, null, null, null);
+
+        // Check if the cursor has any results
+        if (cursor != null && cursor.moveToFirst()) {
+            @SuppressLint("Range") String avatarUrlColumn = cursor.getString(cursor.getColumnIndexOrThrow("avatarUrl"));
+            avatarUrl = avatarUrlColumn;
+        }
+
+        // Close the cursor to prevent memory leaks
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return avatarUrl; // Return the avatar URL or null if not found
+    }
+
+
+
+
+
+    @SuppressLint("Range")
+    public User getUserById(String userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("User", null, "id = ?", new String[]{userId}, null, null, null);
+        User user = null; // Initialize user to null
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                user = new User();
+                user.setId(Integer.parseInt(userId)); // Set the user ID
+                user.setFullname(cursor.getString(cursor.getColumnIndex("fullname"))); // Load fullname
+                user.setUsername(cursor.getString(cursor.getColumnIndex("username"))); // Load username
+                user.setAddress(cursor.getString(cursor.getColumnIndex("address"))); // Load address
+                user.setPhone(cursor.getString(cursor.getColumnIndex("phone"))); // Load phone
+                user.setAvatarUrl(cursor.getString(cursor.getColumnIndex("avatarUrl"))); // Load avatar URL
+            }
+            cursor.close();
+        }
+        return user; // Return the user object or null if not found
+    }
+
+    public boolean updateUserProfile(String userId, String fullName, String username, String address, String phone) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("fullname", fullName);
+        contentValues.put("username", username);
+        contentValues.put("address", address);
+        contentValues.put("phone", phone);
+      //  contentValues.put("avatarUrl", avatarUrl); // Include avatar URL in updates
+
+        // Update user profile where the user ID matches
+        int result = db.update("User", contentValues, "id = ?", new String[]{userId});
+        return result > 0; // Returns true if at least one row was updated
+    }
+
+    public int insertUserProfile(String googleId, String fullName, String username, String phone, String avatarUrl) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("fullname", fullName);
+        contentValues.put("username", username);
+        contentValues.put("phone", phone);
+        contentValues.put("avatarUrl", avatarUrl); // Include avatar URL in insert
+
+        // Check if the user already exists by googleId
+        if (isGoogleUserExists(googleId)) {
+            // Update the existing user record
+            int rowsAffected = db.update("User", contentValues, "googleId = ?", new String[]{googleId});
+            return rowsAffected > 0 ? getUserIdByGoogleId(googleId) : -1; // Return user ID if updated, otherwise -1
+        } else {
+            // Insert a new user record
+            contentValues.put("googleId", googleId); // Add googleId to content values
+            long result = db.insert("User", null, contentValues);
+            return result != -1 ? (int) result : -1; // Return the inserted ID cast to int, or -1 if failed
+        }
+    }
+
+    // Helper method to get user ID by Google ID
+    private int getUserIdByGoogleId(String googleId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("User", new String[]{"id"}, "googleId = ?", new String[]{googleId}, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            @SuppressLint("Range") int userId = cursor.getInt(cursor.getColumnIndex("id"));
+            cursor.close();
+            return userId; // Return the found user ID
+        }
+        return -1; // Return -1 if user ID not found
+    }
+
+    // Helper method to check if the user exists based on googleId
+    private boolean isGoogleUserExists(String googleId) {
+        String query = "SELECT * FROM User WHERE googleId = ?";
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{googleId});
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+
+
+
+
+
+
+
 
 }
 
