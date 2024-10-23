@@ -361,11 +361,12 @@
             android:padding="5dp"
             android:gravity="center_vertical"
             android:layout_height="wrap_content">
+
             <ImageView
-                android:id="@+id/StImage32"
+                android:id="@+id/StImageSignOut"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/ic_privacy"
+                android:src="@drawable/ic_profile"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="0dp"
                 android:layout_centerVertical="true"
@@ -373,31 +374,39 @@
                 android:layout_marginStart="5dp"
                 android:scaleType="centerCrop"
                 app:tint="@color/black" />
+
             <TextView
-                android:id="@+id/St_32"
+                android:id="@+id/StSignOutText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#444"
-                android:layout_toEndOf="@+id/StImage32"
+                android:layout_toEndOf="@+id/StImageSignOut"
                 android:layout_marginEnd="15dp"
-                android:text="@string/Lbl_Privacy"
+                android:text="Sign Out"
                 android:gravity="start"
                 android:layout_marginStart="5dp"
                 android:textSize="14sp"
                 android:layout_marginBottom="0dp" />
+
             <TextView
-                android:id="@+id/d_32"
+                android:id="@+id/dSignOutDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#777"
-                android:layout_toEndOf="@+id/StImage32"
+                android:layout_toEndOf="@+id/StImageSignOut"
                 android:layout_marginEnd="15dp"
                 android:layout_marginTop="25dp"
-                android:text="@string/Lbl_privacy_policy"
+                android:text="Tap to sign out"
                 android:gravity="start"
                 android:layout_marginStart="5dp"
                 android:textSize="14sp"
                 android:layout_marginBottom="0dp" />
+
         </RelativeLayout>
+
+
+
+
+
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

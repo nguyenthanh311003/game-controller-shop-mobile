@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -42,11 +43,16 @@ public class ProfileActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private DatabaseHelper databaseHelper;
 
+    private FirebaseAuth firebaseAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Initialize FirebaseAuth instance
+        firebaseAuth = FirebaseAuth.getInstance();
 
         // Initialize Firebase Storage
         storageReference = FirebaseStorage.getInstance().getReference("avatars");
@@ -57,6 +63,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Upload Image Button
         binding.uploadImageBtn.setOnClickListener(v -> selectImageSource());
+
+        // Set up the sign-out button
+        binding.StFifthLayout.setOnClickListener(v -> signOut());
+
 
         // Set up click listeners for navigation
         binding.BoostButton.setOnClickListener(v -> startActivity(new Intent(ProfileActivity.this, AboutActivity.class)));
@@ -202,6 +212,25 @@ public class ProfileActivity extends AppCompatActivity {
                 Toast.makeText(this, "Camera permission is required to capture images.", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    // Sign out method
+    private void signOut() {
+        // Clear the SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+
+        // Firebase sign out
+        firebaseAuth.signOut();
+
+        // Redirect to LoginActivity
+        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+
+        Toast.makeText(this, "Signed out successfully", Toast.LENGTH_SHORT).show();
     }
 
 }
