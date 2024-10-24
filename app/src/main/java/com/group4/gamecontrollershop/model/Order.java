@@ -6,23 +6,25 @@ import java.util.List;
 public class Order {
     private int id;
     private int userId;
-//    private User user;
     private Double totalAmount;
     private Date orderDate;
     private String status;
-//    private List<OrderItem> orderItems;
+    private OrderDetail orderDetail;  // Add OrderDetail reference
 
+    // Constructors
     public Order() {
     }
 
-    public Order(int id, int userId, Double totalAmount, Date orderDate, String status) {
+    public Order(int id, int userId, Double totalAmount, Date orderDate, String status, OrderDetail orderDetail) {
         this.id = id;
         this.userId = userId;
         this.totalAmount = totalAmount;
         this.orderDate = orderDate;
         this.status = status;
+        this.orderDetail = orderDetail;  // Set OrderDetail in constructor
     }
 
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -61,5 +63,13 @@ public class Order {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public OrderDetail getOrderDetail() {
+        return orderDetail;
+    }
+
+    public void setOrderDetail(OrderDetail orderDetail) {
+        this.orderDetail = orderDetail;
     }
 }

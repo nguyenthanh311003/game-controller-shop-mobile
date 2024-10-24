@@ -11,6 +11,7 @@ import com.group4.gamecontrollershop.model.Brand;
 import com.group4.gamecontrollershop.model.CartItem;
 import com.group4.gamecontrollershop.model.Favorite;
 import com.group4.gamecontrollershop.model.Order;
+import com.group4.gamecontrollershop.model.OrderDetail;
 import com.group4.gamecontrollershop.model.Product;
 import com.group4.gamecontrollershop.model.User;
 
@@ -88,6 +89,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "status TEXT, " +
             "FOREIGN KEY(userId) REFERENCES User(id));";
 
+
     private static final String CREATE_TABLE_ORDER_ITEM = "CREATE TABLE OrderItem (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "orderId INTEGER, " +
@@ -112,6 +114,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "FOREIGN KEY(userId) REFERENCES User(id), " +
             "FOREIGN KEY(productId) REFERENCES Product(id));";
 
+    private static final String CREATE_TABLE_ORDER_DETAIL = "CREATE TABLE OrderDetail (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "orderId INTEGER, " +
+            "userId INTEGER, " +
+            "address TEXT, " +
+            "phone TEXT, " +
+            "email TEXT, " +
+            "FOREIGN KEY(orderId) REFERENCES `Order`(id), " +
+            "FOREIGN KEY(userId) REFERENCES User(id));";
+
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -122,9 +135,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_BRAND);
         db.execSQL(CREATE_TABLE_PRODUCT);
         db.execSQL(CREATE_TABLE_ORDER);
+        //
+        db.execSQL(CREATE_TABLE_ORDER_DETAIL);
         db.execSQL(CREATE_TABLE_ORDER_ITEM);
         db.execSQL(CREATE_TABLE_FAVORITE);
         db.execSQL(CREATE_TABLE_CART);
+
     }
 
     @Override
@@ -137,7 +153,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS Brand");
         db.execSQL("DROP TABLE IF EXISTS User");
         db.execSQL("DROP TABLE IF EXISTS Cart");
-
+        db.execSQL("DROP TABLE IF EXISTS OrderDetail");
         // Tạo lại các bảng mới
         onCreate(db);
     }
@@ -453,37 +469,85 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return affectedRows > 0;
     }
 
-    public List<Order> getAllOrders(int userId) {
-        List<Order> orderList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Update format as needed
+//    public List<Order> getAllOrders(int userId) {
+//        List<Order> orderList = new ArrayList<>();
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Update format as needed
+//
+//        Cursor cursor = db.query("`Order`", new String[]{"id", "totalAmount", "orderDate", "status"},
+//                "userId=?", new String[]{String.valueOf(userId)}, null, null, null);
+//
+//        if (cursor != null && cursor.moveToFirst()) {
+//            do {
+//                int orderId = cursor.getInt(0);
+//                double totalAmount = cursor.getDouble(1);
+//                String orderDateString = cursor.getString(2);
+//                String status = cursor.getString(3);
+//
+//                Date orderDate = null;
+//                try {
+//                    orderDate = dateFormat.parse(orderDateString); // Parse the date
+//                } catch (ParseException e) {
+//                    e.printStackTrace(); // Handle parsing exception
+//                }
+//
+//                Order order = new Order(orderId, userId, totalAmount, orderDate, status,null);
+//                orderList.add(order);
+//            } while (cursor.moveToNext());
+//
+//            cursor.close();
+//        }
+//
+//        return orderList;
+//    }
+public List<Order> getAllOrders(int userId) {
+    List<Order> orderList = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        Cursor cursor = db.query("`Order`", new String[]{"id", "totalAmount", "orderDate", "status"},
-                "userId=?", new String[]{String.valueOf(userId)}, null, null, null);
+    // Query to get orders along with order details
+    String query = "SELECT o.id, o.totalAmount, o.orderDate, o.status, " +
+            "od.address, od.phone, od.email " +
+            "FROM `Order` o " +
+            "LEFT JOIN OrderDetail od ON o.id = od.orderId " +
+            "WHERE o.userId = ?";
 
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                int orderId = cursor.getInt(0);
-                double totalAmount = cursor.getDouble(1);
-                String orderDateString = cursor.getString(2);
-                String status = cursor.getString(3);
+    Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
 
-                Date orderDate = null;
-                try {
-                    orderDate = dateFormat.parse(orderDateString); // Parse the date
-                } catch (ParseException e) {
-                    e.printStackTrace(); // Handle parsing exception
-                }
+    if (cursor != null && cursor.moveToFirst()) {
+        do {
+            // Order information
+            int orderId = cursor.getInt(0);
+            double totalAmount = cursor.getDouble(1);
+            String orderDateString = cursor.getString(2);
+            String status = cursor.getString(3);
 
-                Order order = new Order(orderId, userId, totalAmount, orderDate, status);
-                orderList.add(order);
-            } while (cursor.moveToNext());
+            // OrderDetail information
+            String address = cursor.getString(4);
+            String phone = cursor.getString(5);
+            String email = cursor.getString(6);
 
-            cursor.close();
-        }
+            // Parse order date
+            Date orderDate = null;
+            try {
+                orderDate = dateFormat.parse(orderDateString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
-        return orderList;
+            // Create OrderDetail object
+            OrderDetail orderDetail = new OrderDetail(0, orderId, userId, address, phone, email);
+
+            // Create Order object and add it to the list
+            Order order = new Order(orderId, userId, totalAmount, orderDate, status, orderDetail);
+            orderList.add(order);
+        } while (cursor.moveToNext());
+
+        cursor.close();
     }
+
+    return orderList;
+}
 
     public void insertOrder(int userId, double totalAmount, Date orderDate, String status) {
         SQLiteDatabase db = this.getWritableDatabase();

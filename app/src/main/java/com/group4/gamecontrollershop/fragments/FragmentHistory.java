@@ -63,10 +63,12 @@ public class FragmentHistory extends Fragment {
             orderList = myDB.getAllOrders(userId);
         }
 
-        historyAdapter = new HistoryAdapter(orderList);
+        historyAdapter = new HistoryAdapter(orderList, getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(historyAdapter);
 
+
         return view;
     }
+
 }

@@ -9,14 +9,15 @@
     android:padding="16dp">
 
     <LinearLayout
-        android:layout_width="204dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
         android:layout_weight="2"
         android:orientation="vertical">
 
+        <!-- Order ID TextView -->
         <TextView
-            android:id="@+id/orderId"
+            android:id="@+id/orderIdText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="4dp"
@@ -25,8 +26,9 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
+        <!-- Total Amount TextView -->
         <TextView
-            android:id="@+id/orderPrice"
+            android:id="@+id/totalAmountText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
@@ -34,17 +36,18 @@
             android:textColor="#A68F8F"
             android:textSize="16sp" />
 
+        <!-- Order Date TextView -->
         <TextView
-            android:id="@+id/orderDate"
+            android:id="@+id/orderDateText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
             android:text="20/12/2024 11:00"
             android:textColor="#A68F8F"
             android:textSize="16sp" />
-
     </LinearLayout>
 
+    <!-- Order Status ImageView -->
     <ImageView
         android:id="@+id/orderStatus"
         android:layout_width="52dp"
@@ -53,5 +56,4 @@
         android:layout_weight="1"
         android:clipToOutline="true"
         tools:srcCompat="@tools:sample/avatars" />
-
 </LinearLayout>
