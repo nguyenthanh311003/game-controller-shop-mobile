@@ -1,5 +1,6 @@
 package com.group4.gamecontrollershop;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -24,7 +25,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 public class GameControllerDetailActivity extends AppCompatActivity {
-    private TextView productName, productDescription, productPrice;
+    private TextView productName, productDescription, productPrice, tvAvailableQuantity;
     private ImageView productImage, productImageFirst, productImageSecond, productImageThird, ivFavorite;
     private DatabaseHelper myDB;
     private ImageButton btnDecreaseQuantity;
@@ -35,6 +36,7 @@ public class GameControllerDetailActivity extends AppCompatActivity {
     private double currentProductPrice;
     private boolean isAlreadyFavorite = false;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +56,7 @@ public class GameControllerDetailActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.ivBack);
         tvQuantity = findViewById(R.id.tvQuantity);
         ivFavorite = findViewById(R.id.ivFavorite);
+        tvAvailableQuantity =  findViewById(R.id.tvAvailableQuantity);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -72,6 +75,7 @@ public class GameControllerDetailActivity extends AppCompatActivity {
                 productDescription.setText(product.getDescription());
                 productPrice.setText(String.valueOf(product.getNewPrice()));
                 currentProductPrice = product.getNewPrice();
+                tvAvailableQuantity.setText("Available: " + product.getQuantity());
                 Glide.with(this)
                         .load(product.getImgUrl())
                         .into(productImage);
@@ -102,13 +106,16 @@ public class GameControllerDetailActivity extends AppCompatActivity {
 
         btnIncreaseQuantity.setOnClickListener(v -> {
             int quantity = Integer.parseInt(tvQuantity.getText().toString());
+            int availableProduct = Integer.parseInt(tvAvailableQuantity.getText().toString().replace("Available: ", ""));
 
-            quantity++;
-            double totalPrice = quantity * currentProductPrice;
-            DecimalFormat decimalFormat = new DecimalFormat("#.00");
-            String formattedPrice = decimalFormat.format(totalPrice);
-            productPrice.setText(formattedPrice);
-            tvQuantity.setText(String.valueOf(quantity));
+            if (quantity < availableProduct) {
+                quantity++;
+                double totalPrice = quantity * currentProductPrice;
+                DecimalFormat decimalFormat = new DecimalFormat("#.00");
+                String formattedPrice = decimalFormat.format(totalPrice);
+                productPrice.setText(formattedPrice);
+                tvQuantity.setText(String.valueOf(quantity));
+            }
         });
 
         btnBack.setOnClickListener(v -> {
