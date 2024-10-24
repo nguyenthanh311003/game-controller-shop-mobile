@@ -1,6 +1,9 @@
 package com.group4.gamecontrollershop.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.group4.gamecontrollershop.LoginActivity;
 import com.group4.gamecontrollershop.R;
 import com.group4.gamecontrollershop.adapter.HistoryAdapter;
 import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
@@ -49,24 +53,35 @@ public class FragmentHistory extends Fragment {
             // Consider displaying an error message or fallback here
         }
 
-        int userId = 1; // TODO: Get user ID from current user
+        // Get userId from SharedPreferences
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String userId = sharedPreferences.getString("userId", null); // Default is null if not found
+
+        if (userId == null) {
+            // Handle case where userId is not found
+            // Redirect to login or show an alert dialog
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
+            getActivity().finish();
+            return view;
+        }
 
         // Fetch all orders for the current user
-        orderList = myDB.getAllOrders(userId);
+        orderList = myDB.getAllOrders(Integer.parseInt(userId));
 
         // If no orders exist, insert sample orders (for testing purposes)
         if (orderList.isEmpty()) {
             final String SUCCESS_STATUS = "success";
             final String FAILURE_STATUS = "failure";
 
-            myDB.insertOrder(userId, 1500000d, orderDate, SUCCESS_STATUS);
-            myDB.insertOrder(userId, 1500000d, orderDate, SUCCESS_STATUS);
-            myDB.insertOrder(userId, 1500000d, orderDate, SUCCESS_STATUS);
-            myDB.insertOrder(userId, 1500000d, orderDate, FAILURE_STATUS);
-            myDB.insertOrder(userId, 1500000d, orderDate, SUCCESS_STATUS);
+            myDB.insertOrder(Integer.parseInt(userId), 1500000d, orderDate, SUCCESS_STATUS);
+            myDB.insertOrder(Integer.parseInt(userId), 1500000d, orderDate, SUCCESS_STATUS);
+            myDB.insertOrder(Integer.parseInt(userId), 1500000d, orderDate, SUCCESS_STATUS);
+            myDB.insertOrder(Integer.parseInt(userId), 1500000d, orderDate, FAILURE_STATUS);
+            myDB.insertOrder(Integer.parseInt(userId), 1500000d, orderDate, SUCCESS_STATUS);
 
             // Refresh order list after insertion
-            orderList = myDB.getAllOrders(userId);
+            orderList = myDB.getAllOrders(Integer.parseInt(userId));
         }
 
         // Set up RecyclerView
