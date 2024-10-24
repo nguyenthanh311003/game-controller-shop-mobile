@@ -40,7 +40,6 @@ public class OrderDetailActivity extends AppCompatActivity {
         userFullNameText = findViewById(R.id.userFullName);
         userAddressText = findViewById(R.id.userAddress);
         userPhoneText = findViewById(R.id.userPhone);
-        userEmailText = findViewById(R.id.userEmail);
         orderStatusImage = findViewById(R.id.orderStatus);
         orderStatusText = findViewById(R.id.orderStatusText);
         orderProductsRecyclerView = findViewById(R.id.orderProductsRecyclerView); // Initialize RecyclerView
@@ -55,7 +54,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         String userFullName = getIntent().getStringExtra("userFullName");
         String userAddress = getIntent().getStringExtra("userAddress");
         String userPhone = getIntent().getStringExtra("userPhone");
-        String userEmail = getIntent().getStringExtra("userEmail");
+
 
         // Set the data to the views
         orderIdText.setText("Order ID: #" + orderId);
@@ -64,7 +63,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         userFullNameText.setText("Full Name: " + (userFullName != null ? userFullName : "N/A"));
         userAddressText.setText("Address: " + (userAddress != null ? userAddress : "N/A"));
         userPhoneText.setText("Phone: " + (userPhone != null ? userPhone : "N/A"));
-        userEmailText.setText("Email: " + (userEmail != null ? userEmail : "N/A"));
+
 
         // Set order status
 //        orderStatusText.setText("Status: " + orderStatus);

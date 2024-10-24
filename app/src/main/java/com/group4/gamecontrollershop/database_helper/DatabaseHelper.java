@@ -848,6 +848,61 @@ public List<Order> getAllOrders(int userId) {
         db.insert("OrderDetail", null, orderDetail2);
     }
 
+    @SuppressLint("Range")
+    public String getUserFullName(int userId) {
+        String fullName = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT fullname FROM User WHERE id = ?", new String[]{String.valueOf(userId)});
+        try {
+            if (cursor.moveToFirst()) {
+                // Make sure to use the exact column name as it is in your database schema
+                fullName = cursor.getString(cursor.getColumnIndexOrThrow("fullname"));
+            }
+        } finally {
+            // Always close the cursor to avoid memory leaks
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return fullName;
+    }
+
+    @SuppressLint("Range")
+    public String getUserAddress(int userId) {
+        String address = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT address FROM User WHERE id = ?", new String[]{String.valueOf(userId)});
+        try {
+            if (cursor.moveToFirst()) {
+                address = cursor.getString(cursor.getColumnIndexOrThrow("address"));
+            }
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return address;
+    }
+
+    @SuppressLint("Range")
+    public String getUserPhone(int userId) {
+        String phone = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT phone FROM User WHERE id = ?", new String[]{String.valueOf(userId)});
+        try {
+            if (cursor.moveToFirst()) {
+                phone = cursor.getString(cursor.getColumnIndexOrThrow("phone"));
+            }
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return phone;
+    }
+
+
+
 
 
 }

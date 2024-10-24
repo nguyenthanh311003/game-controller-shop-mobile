@@ -13,10 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group4.gamecontrollershop.R;
+import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
 import com.group4.gamecontrollershop.model.Order;
 import com.group4.gamecontrollershop.OrderDetailActivity;
 import com.group4.gamecontrollershop.model.OrderDetail;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -46,15 +48,35 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
         // Set an onClickListener to the entire order item
         holder.itemView.setOnClickListener(v -> {
-            // Open the order detail activity and pass the order details
+            int userId = order.getUserId(); // Get userId from the order
+            DatabaseHelper db = new DatabaseHelper(context);
+
+            // Fetch user details based on userId
+            String userFullName = db.getUserFullName(userId);
+            String userAddress = db.getUserAddress(userId);
+            String userPhone = db.getUserPhone(userId);
+
+
+            // Open the order detail activity and pass the order and user details
             Intent intent = new Intent(context, OrderDetailActivity.class);
             intent.putExtra("orderId", order.getId());
             intent.putExtra("orderTotalAmount", order.getTotalAmount());
             intent.putExtra("orderDate", dateFormat.format(order.getOrderDate()));
             intent.putExtra("orderStatus", order.getStatus());
+
+            // Pass user info to the intent
+            intent.putExtra("userFullName", userFullName);
+            intent.putExtra("userAddress", userAddress);
+            intent.putExtra("userPhone", userPhone);
+
+            // Pass the list of order details (ensure OrderDetail implements Serializable)
+            intent.putExtra("orderDetails", (Serializable) order.getOrderDetails());
+
+
             context.startActivity(intent);
         });
     }
+
 
     @Override
     public int getItemCount() {
