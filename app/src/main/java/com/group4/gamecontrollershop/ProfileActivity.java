@@ -18,6 +18,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,6 +48,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
 
+    private GoogleSignInClient googleSignInClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +58,12 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Initialize FirebaseAuth instance
         firebaseAuth = FirebaseAuth.getInstance();
+
+        // Configure Google Sign-In options
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // Initialize Firebase Storage
         storageReference = FirebaseStorage.getInstance().getReference("avatars");
@@ -214,7 +225,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    // Sign out method
+    // Sign out method for Firebase and Google account
     private void signOut() {
         // Clear the SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
@@ -225,6 +236,16 @@ public class ProfileActivity extends AppCompatActivity {
         // Firebase sign out
         firebaseAuth.signOut();
 
+        // Google sign out
+        googleSignInClient.signOut().addOnCompleteListener(this, task -> {
+            Toast.makeText(ProfileActivity.this, "Google Account Disconnected", Toast.LENGTH_SHORT).show();
+        });
+
+        // Remove the saved Google account from device
+        googleSignInClient.revokeAccess().addOnCompleteListener(this, task -> {
+            Toast.makeText(ProfileActivity.this, "Google Account Removed from Device", Toast.LENGTH_SHORT).show();
+        });
+
         // Redirect to LoginActivity
         Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
         startActivity(intent);
@@ -232,5 +253,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Signed out successfully", Toast.LENGTH_SHORT).show();
     }
-
 }
+
+
