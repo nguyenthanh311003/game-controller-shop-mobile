@@ -3,22 +3,38 @@ package com.group4.gamecontrollershop;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.group4.gamecontrollershop.adapter.OrderDetailAdapter;
+import com.group4.gamecontrollershop.model.OrderDetail;
+import com.group4.gamecontrollershop.model.Product;
+
+import java.util.List;
 
 public class OrderDetailActivity extends AppCompatActivity {
 
-    private TextView orderIdText, totalAmountText, orderDateText, userFullNameText, userAddressText, userPhoneText, userEmailText, orderStatusText;
+    private TextView totalAmountText;
+    private TextView orderDateText;
+    private TextView userFullNameText;
+    private TextView userAddressText;
+    private TextView userPhoneText;
+    private TextView userEmailText;
+    private TextView orderStatusText;
     private ImageView orderStatusImage;
+    private RecyclerView orderProductsRecyclerView; // RecyclerView to display order product details
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_order_detail); // Ensure this matches the new layout XML
+        setContentView(R.layout.activity_order_detail);
 
         // Bind views
-        orderIdText = findViewById(R.id.orderId);
+        TextView orderIdText = findViewById(R.id.orderId);
         totalAmountText = findViewById(R.id.orderTotal);
         orderDateText = findViewById(R.id.orderDate);
         userFullNameText = findViewById(R.id.userFullName);
@@ -27,6 +43,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         userEmailText = findViewById(R.id.userEmail);
         orderStatusImage = findViewById(R.id.orderStatus);
         orderStatusText = findViewById(R.id.orderStatusText);
+        orderProductsRecyclerView = findViewById(R.id.orderProductsRecyclerView); // Initialize RecyclerView
 
         // Get data from the intent
         int orderId = getIntent().getIntExtra("orderId", -1);
@@ -34,7 +51,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         String orderDate = getIntent().getStringExtra("orderDate");
         String orderStatus = getIntent().getStringExtra("orderStatus");
 
-        // User info (you can replace these with actual data if available)
+        // User info
         String userFullName = getIntent().getStringExtra("userFullName");
         String userAddress = getIntent().getStringExtra("userAddress");
         String userPhone = getIntent().getStringExtra("userPhone");
@@ -44,19 +61,29 @@ public class OrderDetailActivity extends AppCompatActivity {
         orderIdText.setText("Order ID: #" + orderId);
         totalAmountText.setText("Total Amount: $" + totalAmount);
         orderDateText.setText("Order Date: " + orderDate);
-
-        // Set user information
         userFullNameText.setText("Full Name: " + (userFullName != null ? userFullName : "N/A"));
         userAddressText.setText("Address: " + (userAddress != null ? userAddress : "N/A"));
         userPhoneText.setText("Phone: " + (userPhone != null ? userPhone : "N/A"));
         userEmailText.setText("Email: " + (userEmail != null ? userEmail : "N/A"));
 
         // Set order status
-        orderStatusText.setText("Status: " + orderStatus);
-        if ("success".equals(orderStatus)) {
-            orderStatusImage.setImageResource(R.drawable.success);
-        } else {
-            orderStatusImage.setImageResource(R.drawable.failure);
+//        orderStatusText.setText("Status: " + orderStatus);
+//        if ("success".equals(orderStatus)) {
+//            orderStatusImage.setImageResource(R.drawable.success);
+//        } else {
+//            orderStatusImage.setImageResource(R.drawable.failure);
+//        }
+
+        // Retrieve order details
+        List<OrderDetail> orderDetails = (List<OrderDetail>) getIntent().getSerializableExtra("orderDetails");
+        if (orderDetails != null) {
+            setupRecyclerView(orderDetails);
         }
+    }
+
+    private void setupRecyclerView(List<OrderDetail> orderDetails) {
+        orderProductsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        OrderDetailAdapter adapter = new OrderDetailAdapter(orderDetails);
+        orderProductsRecyclerView.setAdapter(adapter);
     }
 }

@@ -9,19 +9,16 @@ public class Order {
     private Double totalAmount;
     private Date orderDate;
     private String status;
-    private OrderDetail orderDetail;  // Add OrderDetail reference
+    private List<OrderDetail> orderDetails;  // List of OrderDetails for multiple products
 
-    // Constructors
-    public Order() {
-    }
-
-    public Order(int id, int userId, Double totalAmount, Date orderDate, String status, OrderDetail orderDetail) {
+    // Constructor for multiple OrderDetails
+    public Order(int id, int userId, Double totalAmount, Date orderDate, String status, List<OrderDetail> orderDetails) {
         this.id = id;
         this.userId = userId;
         this.totalAmount = totalAmount;
         this.orderDate = orderDate;
         this.status = status;
-        this.orderDetail = orderDetail;  // Set OrderDetail in constructor
+        this.orderDetails = orderDetails;
     }
 
     // Getters and Setters
@@ -65,11 +62,11 @@ public class Order {
         this.status = status;
     }
 
-    public OrderDetail getOrderDetail() {
-        return orderDetail;
+    public List<OrderDetail> getOrderDetails() {
+        return orderDetails;
     }
 
-    public void setOrderDetail(OrderDetail orderDetail) {
-        this.orderDetail = orderDetail;
+    public void setOrderDetails(List<OrderDetail> orderDetails) {
+        this.orderDetails = orderDetails;
     }
 }

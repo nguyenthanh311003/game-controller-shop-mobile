@@ -67,7 +67,7 @@
                 android:background="@drawable/custom_edittext"
                 android:drawableLeft="@drawable/ic_baseline_person_outline_24"
                 android:drawablePadding="8dp"
-                android:hint="Username"
+                android:hint="Address"
                 android:padding="8dp"
                 android:singleLine="true"
                 android:textColor="@color/black" />

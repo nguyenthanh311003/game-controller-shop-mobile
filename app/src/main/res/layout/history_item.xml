@@ -45,6 +45,15 @@
             android:text="20/12/2024 11:00"
             android:textColor="#A68F8F"
             android:textSize="16sp" />
+
+        <!-- New TextView for product summary -->
+        <TextView
+            android:id="@+id/productSummaryText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Products: 2 items"
+            android:textColor="#A68F8F"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <!-- Order Status ImageView -->

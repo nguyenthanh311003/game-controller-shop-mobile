@@ -42,7 +42,6 @@ public class FragmentHome extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
         productRV = view.findViewById(R.id.productRV);
         brandRV = view.findViewById(R.id.brandRV);
         btnSort = view.findViewById(R.id.btnSort);

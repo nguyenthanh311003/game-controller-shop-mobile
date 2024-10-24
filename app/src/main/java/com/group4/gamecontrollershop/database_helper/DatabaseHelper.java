@@ -118,11 +118,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "orderId INTEGER, " +
             "userId INTEGER, " +
+            "productId INTEGER, " + //  track products in an order
+            "quantity INTEGER, " +  //  track the number of units bought
+            "price REAL, " +        //  store the price of each product
             "address TEXT, " +
             "phone TEXT, " +
             "email TEXT, " +
             "FOREIGN KEY(orderId) REFERENCES `Order`(id), " +
-            "FOREIGN KEY(userId) REFERENCES User(id));";
+            "FOREIGN KEY(userId) REFERENCES User(id), " +
+            "FOREIGN KEY(productId) REFERENCES Product(id));";
+
 
 
     public DatabaseHelper(Context context) {
@@ -135,12 +140,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_BRAND);
         db.execSQL(CREATE_TABLE_PRODUCT);
         db.execSQL(CREATE_TABLE_ORDER);
-        //
         db.execSQL(CREATE_TABLE_ORDER_DETAIL);
         db.execSQL(CREATE_TABLE_ORDER_ITEM);
         db.execSQL(CREATE_TABLE_FAVORITE);
         db.execSQL(CREATE_TABLE_CART);
 
+
+        insertDemoData(db);
     }
 
     @Override
@@ -156,6 +162,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS OrderDetail");
         // Tạo lại các bảng mới
         onCreate(db);
+
     }
 
     public void insertProduct(Product product) {
@@ -507,12 +514,15 @@ public List<Order> getAllOrders(int userId) {
 
     // Query to get orders along with order details
     String query = "SELECT o.id, o.totalAmount, o.orderDate, o.status, " +
-            "od.address, od.phone, od.email " +
+            "od.address, od.phone, od.email, od.productId, od.quantity, od.price " + // Get product-specific details
             "FROM `Order` o " +
             "LEFT JOIN OrderDetail od ON o.id = od.orderId " +
             "WHERE o.userId = ?";
 
     Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+
+    int currentOrderId = -1;
+    Order currentOrder = null;
 
     if (cursor != null && cursor.moveToFirst()) {
         do {
@@ -526,6 +536,9 @@ public List<Order> getAllOrders(int userId) {
             String address = cursor.getString(4);
             String phone = cursor.getString(5);
             String email = cursor.getString(6);
+            int productId = cursor.getInt(7);
+            int quantity = cursor.getInt(8);
+            double price = cursor.getDouble(9);
 
             // Parse order date
             Date orderDate = null;
@@ -535,13 +548,35 @@ public List<Order> getAllOrders(int userId) {
                 e.printStackTrace();
             }
 
-            // Create OrderDetail object
-            OrderDetail orderDetail = new OrderDetail(0, orderId, userId, address, phone, email);
+            // If the order ID changes, create a new Order object
+            if (currentOrderId != orderId) {
+                // If there's already a currentOrder, add it to the list
+                if (currentOrder != null) {
+                    orderList.add(currentOrder);
+                }
 
-            // Create Order object and add it to the list
-            Order order = new Order(orderId, userId, totalAmount, orderDate, status, orderDetail);
-            orderList.add(order);
+                // Create a new list for OrderDetail entries
+                List<OrderDetail> orderDetails = new ArrayList<>();
+
+                // Create a new OrderDetail object for the current order
+                OrderDetail orderDetail = new OrderDetail(0, orderId, userId, productId, quantity, price, address, phone, email);
+                orderDetails.add(orderDetail); // Add the first order detail to the list
+
+                // Create a new Order object
+                currentOrder = new Order(orderId, userId, totalAmount, orderDate, status, orderDetails);
+                currentOrderId = orderId;  // Update the current order ID
+            } else {
+                // Add additional OrderDetail objects if the order ID is the same
+                OrderDetail orderDetail = new OrderDetail(0, orderId, userId, productId, quantity, price, address, phone, email);
+                currentOrder.getOrderDetails().add(orderDetail); // Add to the existing order's details
+            }
+
         } while (cursor.moveToNext());
+
+        // Add the last processed order
+        if (currentOrder != null) {
+            orderList.add(currentOrder);
+        }
 
         cursor.close();
     }
@@ -692,7 +727,7 @@ public List<Order> getAllOrders(int userId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("fullname", fullName);
-        contentValues.put("username", username);
+        contentValues.put("address", username);
         contentValues.put("phone", phone);
         contentValues.put("avatarUrl", avatarUrl); // Include avatar URL in insert
 
@@ -734,6 +769,84 @@ public List<Order> getAllOrders(int userId) {
 
 
 
+    public void insertDemoData(SQLiteDatabase db) {
+        // Insert demo user
+        ContentValues userValues = new ContentValues();
+        userValues.put("fullname", "John Doe");
+        userValues.put("username", "johndoe");
+        userValues.put("password", "password123");
+        userValues.put("avatarUrl", "https://example.com/avatar.png");
+        userValues.put("address", "123 Main St, Anytown, USA");
+        userValues.put("phone", "1234567890");
+        long userId = db.insert("User", null, userValues);
+
+        // Insert demo brand
+        ContentValues brandValues = new ContentValues();
+        brandValues.put("name", "Sony");
+        long brandId = db.insert("Brand", null, brandValues);
+
+        // Insert demo products
+        ContentValues product1 = new ContentValues();
+        product1.put("name", "PlayStation 5 Controller");
+        product1.put("description", "The latest controller for the PS5");
+        product1.put("imgUrl", "https://example.com/product1.jpg");
+        product1.put("detailImgUrlFirst", "https://example.com/product1_detail1.jpg");
+        product1.put("detailImgUrlSecond", "https://example.com/product1_detail2.jpg");
+        product1.put("detailImgUrlThird", "https://example.com/product1_detail3.jpg");
+        product1.put("oldPrice", 70.00);
+        product1.put("newPrice", 60.00);
+        product1.put("quantity", 10);
+        product1.put("brandId", brandId);
+        product1.put("releaseDate", "2023-10-25");
+        product1.put("status", "available");
+        long productId1 = db.insert("Product", null, product1);
+
+        ContentValues product2 = new ContentValues();
+        product2.put("name", "Xbox Series X Controller");
+        product2.put("description", "The latest controller for the Xbox Series X");
+        product2.put("imgUrl", "https://example.com/product2.jpg");
+        product2.put("detailImgUrlFirst", "https://example.com/product2_detail1.jpg");
+        product2.put("detailImgUrlSecond", "https://example.com/product2_detail2.jpg");
+        product2.put("detailImgUrlThird", "https://example.com/product2_detail3.jpg");
+        product2.put("oldPrice", 65.00);
+        product2.put("newPrice", 55.00);
+        product2.put("quantity", 15);
+        product2.put("brandId", brandId);
+        product2.put("releaseDate", "2023-10-25");
+        product2.put("status", "available");
+        long productId2 = db.insert("Product", null, product2);
+
+        // Insert demo order
+        ContentValues orderValues = new ContentValues();
+        orderValues.put("userId", userId);
+        orderValues.put("totalAmount", 115.00);
+        orderValues.put("orderDate", "2024-10-25");
+        orderValues.put("status", "success");
+        long orderId = db.insert("`Order`", null, orderValues);
+
+        // Insert demo order details
+        ContentValues orderDetail1 = new ContentValues();
+        orderDetail1.put("orderId", orderId);
+        orderDetail1.put("userId", userId);
+        orderDetail1.put("productId", productId1);
+        orderDetail1.put("quantity", 1);
+        orderDetail1.put("price", 60.00);
+        orderDetail1.put("address", "123 Main St, Anytown, USA");
+        orderDetail1.put("phone", "1234567890");
+        orderDetail1.put("email", "johndoe@example.com");
+        db.insert("OrderDetail", null, orderDetail1);
+
+        ContentValues orderDetail2 = new ContentValues();
+        orderDetail2.put("orderId", orderId);
+        orderDetail2.put("userId", userId);
+        orderDetail2.put("productId", productId2);
+        orderDetail2.put("quantity", 1);
+        orderDetail2.put("price", 55.00);
+        orderDetail2.put("address", "123 Main St, Anytown, USA");
+        orderDetail2.put("phone", "1234567890");
+        orderDetail2.put("email", "johndoe@example.com");
+        db.insert("OrderDetail", null, orderDetail2);
+    }
 
 
 

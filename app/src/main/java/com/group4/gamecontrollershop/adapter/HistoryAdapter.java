@@ -8,14 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group4.gamecontrollershop.R;
 import com.group4.gamecontrollershop.model.Order;
-import com.group4.gamecontrollershop.OrderDetailActivity; // New activity for showing order details
+import com.group4.gamecontrollershop.OrderDetailActivity;
+import com.group4.gamecontrollershop.model.OrderDetail;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -63,7 +63,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     class HistoryViewHolder extends RecyclerView.ViewHolder {
         private ImageView orderStatus;
-        private TextView orderId, orderPrice, orderDate;
+        private TextView orderId, orderPrice, orderDate, productSummary;
 
         public HistoryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,6 +71,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             orderPrice = itemView.findViewById(R.id.totalAmountText);
             orderDate = itemView.findViewById(R.id.orderDateText);
             orderStatus = itemView.findViewById(R.id.orderStatus);
+            productSummary = itemView.findViewById(R.id.productSummaryText); // New TextView for product summary
         }
 
         @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
@@ -79,6 +80,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             orderPrice.setText("Amount: $" + order.getTotalAmount());
             orderDate.setText("Order at " + dateFormat.format(order.getOrderDate()));
 
+            // Set product summary
+            StringBuilder summaryBuilder = new StringBuilder("Products: ");
+            List<OrderDetail> orderDetails = order.getOrderDetails();
+            summaryBuilder.append(orderDetails.size()).append(" item(s)");
+            productSummary.setText(summaryBuilder.toString());
+
+            // Set the order status image
             if (ORDER_SUCCESS.equals(order.getStatus())) {
                 orderStatus.setImageResource(R.drawable.success);
             } else {
@@ -86,5 +94,4 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             }
         }
     }
-
 }

@@ -42,14 +42,19 @@ public class FragmentHistory extends Fragment {
 
         Date orderDate = null;
         try {
+            // You might want to get a dynamic date instead
             orderDate = dateFormat.parse("2023-08-15");
         } catch (ParseException e) {
             e.printStackTrace();
+            // Consider displaying an error message or fallback here
         }
 
         int userId = 1; // TODO: Get user ID from current user
+
+        // Fetch all orders for the current user
         orderList = myDB.getAllOrders(userId);
 
+        // If no orders exist, insert sample orders (for testing purposes)
         if (orderList.isEmpty()) {
             final String SUCCESS_STATUS = "success";
             final String FAILURE_STATUS = "failure";
@@ -60,15 +65,15 @@ public class FragmentHistory extends Fragment {
             myDB.insertOrder(userId, 1500000d, orderDate, FAILURE_STATUS);
             myDB.insertOrder(userId, 1500000d, orderDate, SUCCESS_STATUS);
 
+            // Refresh order list after insertion
             orderList = myDB.getAllOrders(userId);
         }
 
+        // Set up RecyclerView
         historyAdapter = new HistoryAdapter(orderList, getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(historyAdapter);
 
-
         return view;
     }
-
 }
