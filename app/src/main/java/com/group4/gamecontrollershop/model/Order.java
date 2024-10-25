@@ -6,23 +6,22 @@ import java.util.List;
 public class Order {
     private int id;
     private int userId;
-//    private User user;
     private Double totalAmount;
     private Date orderDate;
     private String status;
-//    private List<OrderItem> orderItems;
+    private List<OrderDetail> orderDetails;  // List of OrderDetails for multiple products
 
-    public Order() {
-    }
-
-    public Order(int id, int userId, Double totalAmount, Date orderDate, String status) {
+    // Constructor for multiple OrderDetails
+    public Order(int id, int userId, Double totalAmount, Date orderDate, String status, List<OrderDetail> orderDetails) {
         this.id = id;
         this.userId = userId;
         this.totalAmount = totalAmount;
         this.orderDate = orderDate;
         this.status = status;
+        this.orderDetails = orderDetails;
     }
 
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -61,5 +60,13 @@ public class Order {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<OrderDetail> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(List<OrderDetail> orderDetails) {
+        this.orderDetails = orderDetails;
     }
 }

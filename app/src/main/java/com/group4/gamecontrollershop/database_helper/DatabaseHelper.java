@@ -11,6 +11,7 @@ import com.group4.gamecontrollershop.model.Brand;
 import com.group4.gamecontrollershop.model.CartItem;
 import com.group4.gamecontrollershop.model.Favorite;
 import com.group4.gamecontrollershop.model.Order;
+import com.group4.gamecontrollershop.model.OrderDetail;
 import com.group4.gamecontrollershop.model.Product;
 import com.group4.gamecontrollershop.model.User;
 
@@ -88,6 +89,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "status TEXT, " +
             "FOREIGN KEY(userId) REFERENCES User(id));";
 
+
     private static final String CREATE_TABLE_ORDER_ITEM = "CREATE TABLE OrderItem (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "orderId INTEGER, " +
@@ -112,6 +114,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "FOREIGN KEY(userId) REFERENCES User(id), " +
             "FOREIGN KEY(productId) REFERENCES Product(id));";
 
+    private static final String CREATE_TABLE_ORDER_DETAIL = "CREATE TABLE OrderDetail (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "orderId INTEGER, " +
+            "userId INTEGER, " +
+            "productId INTEGER, " + //  track products in an order
+            "quantity INTEGER, " +  //  track the number of units bought
+            "price REAL, " +        //  store the price of each product
+            "address TEXT, " +
+            "phone TEXT, " +
+            "email TEXT, " +
+            "imageUrl TEXT,"+
+            "productName TEXT,"+
+            "FOREIGN KEY(orderId) REFERENCES `Order`(id), " +
+            "FOREIGN KEY(userId) REFERENCES User(id), " +
+            "FOREIGN KEY(productId) REFERENCES Product(id));";
+
+
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -122,9 +142,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_BRAND);
         db.execSQL(CREATE_TABLE_PRODUCT);
         db.execSQL(CREATE_TABLE_ORDER);
+        db.execSQL(CREATE_TABLE_ORDER_DETAIL);
         db.execSQL(CREATE_TABLE_ORDER_ITEM);
         db.execSQL(CREATE_TABLE_FAVORITE);
         db.execSQL(CREATE_TABLE_CART);
+
+
+        insertDemoData(db);
     }
 
     @Override
@@ -137,9 +161,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS Brand");
         db.execSQL("DROP TABLE IF EXISTS User");
         db.execSQL("DROP TABLE IF EXISTS Cart");
-
+        db.execSQL("DROP TABLE IF EXISTS OrderDetail");
         // Tạo lại các bảng mới
         onCreate(db);
+
     }
 
     public void insertProduct(Product product) {
@@ -453,54 +478,176 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return affectedRows > 0;
     }
 
-    public List<Order> getAllOrders(int userId) {
-        List<Order> orderList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Update format as needed
+//    public List<Order> getAllOrders(int userId) {
+//        List<Order> orderList = new ArrayList<>();
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Update format as needed
+//
+//        Cursor cursor = db.query("`Order`", new String[]{"id", "totalAmount", "orderDate", "status"},
+//                "userId=?", new String[]{String.valueOf(userId)}, null, null, null);
+//
+//        if (cursor != null && cursor.moveToFirst()) {
+//            do {
+//                int orderId = cursor.getInt(0);
+//                double totalAmount = cursor.getDouble(1);
+//                String orderDateString = cursor.getString(2);
+//                String status = cursor.getString(3);
+//
+//                Date orderDate = null;
+//                try {
+//                    orderDate = dateFormat.parse(orderDateString); // Parse the date
+//                } catch (ParseException e) {
+//                    e.printStackTrace(); // Handle parsing exception
+//                }
+//
+//                Order order = new Order(orderId, userId, totalAmount, orderDate, status,null);
+//                orderList.add(order);
+//            } while (cursor.moveToNext());
+//
+//            cursor.close();
+//        }
+//
+//        return orderList;
+//    }
+public List<Order> getAllOrders(int userId) {
+    List<Order> orderList = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        Cursor cursor = db.query("`Order`", new String[]{"id", "totalAmount", "orderDate", "status"},
-                "userId=?", new String[]{String.valueOf(userId)}, null, null, null);
+    // Updated SQL query to include product name
+    String query = "SELECT o.id, o.totalAmount, o.orderDate, o.status, " +
+            "od.address, od.phone, od.email, od.productId, od.quantity, od.price, od.imageUrl, od.productName " + // Join with product to get product name
+            "FROM `Order` o " +
+            "LEFT JOIN OrderDetail od ON o.id = od.orderId " +
+            "LEFT JOIN Product p ON od.productId = p.id " + // Add join to fetch product name
+            "WHERE o.userId = ?";
 
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                int orderId = cursor.getInt(0);
-                double totalAmount = cursor.getDouble(1);
-                String orderDateString = cursor.getString(2);
-                String status = cursor.getString(3);
+    Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
 
-                Date orderDate = null;
-                try {
-                    orderDate = dateFormat.parse(orderDateString); // Parse the date
-                } catch (ParseException e) {
-                    e.printStackTrace(); // Handle parsing exception
+    int currentOrderId = -1;
+    Order currentOrder = null;
+
+    if (cursor != null && cursor.moveToFirst()) {
+        do {
+            // Order information
+            int orderId = cursor.getInt(0);
+            double totalAmount = cursor.getDouble(1);
+            String orderDateString = cursor.getString(2);
+            String status = cursor.getString(3);
+
+            // OrderDetail information
+            String address = cursor.getString(4);
+            String phone = cursor.getString(5);
+            String email = cursor.getString(6);
+            int productId = cursor.getInt(7);
+            int quantity = cursor.getInt(8);
+            double price = cursor.getDouble(9);
+            String imageUrl = cursor.getString(10); // Retrieve the image URL
+            String productName = cursor.getString(11); // Retrieve the product name
+
+            // Parse order date
+            Date orderDate = null;
+            try {
+                orderDate = dateFormat.parse(orderDateString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            // If the order ID changes, create a new Order object
+            if (currentOrderId != orderId) {
+                // If there's already a currentOrder, add it to the list
+                if (currentOrder != null) {
+                    orderList.add(currentOrder);
                 }
 
-                Order order = new Order(orderId, userId, totalAmount, orderDate, status);
-                orderList.add(order);
-            } while (cursor.moveToNext());
+                // Create a new list for OrderDetail entries
+                List<OrderDetail> orderDetails = new ArrayList<>();
 
-            cursor.close();
+                // Create a new OrderDetail object for the current order
+                OrderDetail orderDetail = new OrderDetail(0, orderId, userId, productId, quantity, price, address, phone, email, imageUrl, productName);
+                orderDetails.add(orderDetail); // Add the first order detail to the list
+
+                // Create a new Order object
+                currentOrder = new Order(orderId, userId, totalAmount, orderDate, status, orderDetails);
+                currentOrderId = orderId;  // Update the current order ID
+            } else {
+                // Add additional OrderDetail objects if the order ID is the same
+                OrderDetail orderDetail = new OrderDetail(0, orderId, userId, productId, quantity, price, address, phone, email, imageUrl, productName);
+                currentOrder.getOrderDetails().add(orderDetail); // Add to the existing order's details
+            }
+
+        } while (cursor.moveToNext());
+
+        // Add the last processed order
+        if (currentOrder != null) {
+            orderList.add(currentOrder);
         }
 
-        return orderList;
+        cursor.close();
     }
 
-    public void insertOrder(int userId, double totalAmount, Date orderDate, String status) {
+    return orderList;
+}
+
+
+
+
+    public void insertOrder(int userId, double totalAmount, String orderDate, String status, List<OrderDetail> orderDetails) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
 
-        // Format the date as a string
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String orderDateString = dateFormat.format(orderDate);
+        // Start transaction
+        db.beginTransaction();
+        try {
+            // Insert order and get generated order ID
+            ContentValues orderValues = new ContentValues();
+            orderValues.put("userId", userId);
+            orderValues.put("totalAmount", totalAmount);
+            orderValues.put("orderDate", orderDate);
+            orderValues.put("status", status);
 
-        values.put("userId", userId);
-        values.put("totalAmount", totalAmount);
-        values.put("orderDate", orderDateString); // Save as string in database
-        values.put("status", status);
+            // Use double quotes to escape the table name
+            long orderId = db.insert("\"Order\"", null, orderValues);
 
-        db.insert("`Order`", null, values);
-        db.close();
+            // Check if order was inserted successfully
+            if (orderId == -1) {
+                throw new Exception("Failed to insert order");
+            }
+
+            // Insert each OrderDetail with the generated orderId
+            for (OrderDetail detail : orderDetails) {
+                ContentValues detailValues = new ContentValues();
+                detailValues.put("orderId", orderId);  // Use generated orderId here
+                detailValues.put("userId", detail.getUserId());
+                detailValues.put("productId", detail.getProductId());
+                detailValues.put("quantity", detail.getQuantity());
+                detailValues.put("price", detail.getPrice());
+                detailValues.put("address", detail.getAddress());
+                detailValues.put("phone", detail.getPhone());
+                detailValues.put("email", detail.getEmail());
+                detailValues.put("imageUrl", detail.getImageUrl()); // Add image URL if needed
+                detailValues.put("productName", detail.getProductName()); // Add product name if needed
+
+                long detailId = db.insert("OrderDetail", null, detailValues);
+                // Optionally check if detail was inserted successfully
+                if (detailId == -1) {
+                    throw new Exception("Failed to insert order detail for product ID: " + detail.getProductId());
+                }
+            }
+
+            // Mark the transaction as successful
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace(); // Handle the error appropriately in your app
+        } finally {
+            // End the transaction
+            db.endTransaction();
+            db.close();
+        }
     }
+
+
+
+
 
     // Cart
     public void insertCartItem(int userId, int productId, int quantity) {
@@ -628,7 +775,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("fullname", fullName);
-        contentValues.put("username", username);
+        contentValues.put("address", username);
         contentValues.put("phone", phone);
         contentValues.put("avatarUrl", avatarUrl); // Include avatar URL in insert
 
@@ -668,6 +815,139 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
+
+
+    public void insertDemoData(SQLiteDatabase db) {
+        // Insert demo user
+        ContentValues userValues = new ContentValues();
+        userValues.put("fullname", "John Doe");
+        userValues.put("username", "johndoe");
+        userValues.put("password", "password123");
+        userValues.put("avatarUrl", "https://example.com/avatar.png");
+        userValues.put("address", "123 Main St, Anytown, USA");
+        userValues.put("phone", "1234567890");
+        long userId = db.insert("User", null, userValues);
+
+        // Insert demo brand
+        ContentValues brandValues = new ContentValues();
+        brandValues.put("name", "Sony");
+        long brandId = db.insert("Brand", null, brandValues);
+
+        // Insert demo products
+        ContentValues product1 = new ContentValues();
+        product1.put("name", "PlayStation 5 Controller");
+        product1.put("description", "The latest controller for the PS5");
+        product1.put("imgUrl", "https://example.com/product1.jpg");
+        product1.put("detailImgUrlFirst", "https://example.com/product1_detail1.jpg");
+        product1.put("detailImgUrlSecond", "https://example.com/product1_detail2.jpg");
+        product1.put("detailImgUrlThird", "https://example.com/product1_detail3.jpg");
+        product1.put("oldPrice", 70.00);
+        product1.put("newPrice", 60.00);
+        product1.put("quantity", 10);
+        product1.put("brandId", brandId);
+        product1.put("releaseDate", "2023-10-25");
+        product1.put("status", "available");
+        long productId1 = db.insert("Product", null, product1);
+
+        ContentValues product2 = new ContentValues();
+        product2.put("name", "Xbox Series X Controller");
+        product2.put("description", "The latest controller for the Xbox Series X");
+        product2.put("imgUrl", "https://example.com/product2.jpg");
+        product2.put("detailImgUrlFirst", "https://example.com/product2_detail1.jpg");
+        product2.put("detailImgUrlSecond", "https://example.com/product2_detail2.jpg");
+        product2.put("detailImgUrlThird", "https://example.com/product2_detail3.jpg");
+        product2.put("oldPrice", 65.00);
+        product2.put("newPrice", 55.00);
+        product2.put("quantity", 15);
+        product2.put("brandId", brandId);
+        product2.put("releaseDate", "2023-10-25");
+        product2.put("status", "available");
+        long productId2 = db.insert("Product", null, product2);
+
+        // Insert demo order
+        ContentValues orderValues = new ContentValues();
+        orderValues.put("userId", userId);
+        orderValues.put("totalAmount", 115.00);
+        orderValues.put("orderDate", "2024-10-25");
+        orderValues.put("status", "success");
+        long orderId = db.insert("`Order`", null, orderValues);
+
+        // Insert demo order details
+        ContentValues orderDetail1 = new ContentValues();
+        orderDetail1.put("orderId", orderId);
+        orderDetail1.put("userId", userId);
+        orderDetail1.put("productId", productId1);
+        orderDetail1.put("quantity", 1);
+        orderDetail1.put("price", 60.00);
+        orderDetail1.put("address", "123 Main St, Anytown, USA");
+        orderDetail1.put("phone", "1234567890");
+        orderDetail1.put("email", "johndoe@example.com");
+        db.insert("OrderDetail", null, orderDetail1);
+
+        ContentValues orderDetail2 = new ContentValues();
+        orderDetail2.put("orderId", orderId);
+        orderDetail2.put("userId", userId);
+        orderDetail2.put("productId", productId2);
+        orderDetail2.put("quantity", 1);
+        orderDetail2.put("price", 55.00);
+        orderDetail2.put("address", "123 Main St, Anytown, USA");
+        orderDetail2.put("phone", "1234567890");
+        orderDetail2.put("email", "johndoe@example.com");
+        db.insert("OrderDetail", null, orderDetail2);
+    }
+
+    @SuppressLint("Range")
+    public String getUserFullName(int userId) {
+        String fullName = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT fullname FROM User WHERE id = ?", new String[]{String.valueOf(userId)});
+        try {
+            if (cursor.moveToFirst()) {
+                // Make sure to use the exact column name as it is in your database schema
+                fullName = cursor.getString(cursor.getColumnIndexOrThrow("fullname"));
+            }
+        } finally {
+            // Always close the cursor to avoid memory leaks
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return fullName;
+    }
+
+    @SuppressLint("Range")
+    public String getUserAddress(int userId) {
+        String address = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT address FROM User WHERE id = ?", new String[]{String.valueOf(userId)});
+        try {
+            if (cursor.moveToFirst()) {
+                address = cursor.getString(cursor.getColumnIndexOrThrow("address"));
+            }
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return address;
+    }
+
+    @SuppressLint("Range")
+    public String getUserPhone(int userId) {
+        String phone = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT phone FROM User WHERE id = ?", new String[]{String.valueOf(userId)});
+        try {
+            if (cursor.moveToFirst()) {
+                phone = cursor.getString(cursor.getColumnIndexOrThrow("phone"));
+            }
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return phone;
+    }
 
 
 
