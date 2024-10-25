@@ -1,7 +1,9 @@
 package com.group4.gamecontrollershop;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -35,6 +37,9 @@ public class GameControllerDetailActivity extends AppCompatActivity {
     private TextView tvQuantity;
     private double currentProductPrice;
     private boolean isAlreadyFavorite = false;
+
+    private int userId;
+
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -125,7 +130,10 @@ public class GameControllerDetailActivity extends AppCompatActivity {
         });
 
         btnAddToCart.setOnClickListener(v -> {
-            int userId = 1; // TODO: Get user ID from current user
+            // Get user ID from SharedPreferences
+            SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+            userId = Integer.parseInt(sharedPreferences.getString("userId", "1")); // Default is 1 if not found
+
             int quantity = Integer.parseInt(tvQuantity.getText().toString());
             myDB.insertCartItem(userId, productId, quantity);
             Intent intent = new Intent(this, CartActivity.class);

@@ -1,7 +1,9 @@
 package com.group4.gamecontrollershop;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +31,7 @@ public class FavoriteActivity extends AppCompatActivity {
     private List<Favorite> favoriteList;
     private ImageView ivBack, ivCart;
     private DatabaseHelper myDB;
+    private int userId;
 
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -43,7 +46,10 @@ public class FavoriteActivity extends AppCompatActivity {
         ivCart = findViewById(R.id.ivCart);
         myDB = new DatabaseHelper(this);
 
-        int userId = 1; // TODO: Get user ID from current user
+        // Get user ID from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        userId = Integer.parseInt(sharedPreferences.getString("userId", "1")); // Default is 1 if not found
+
         favoriteList = myDB.getFavoriteList(userId);
 
         if (favoriteList.isEmpty()) {

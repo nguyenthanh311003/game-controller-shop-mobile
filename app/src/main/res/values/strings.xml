@@ -26,8 +26,8 @@
     <string name="share_app_text">Please kindly share User Profile Template with your friends!</string>
 
 
-    <string name="facebook_app_id">a</string>
-    <string name="fb_login_protocol_scheme">a</string>
-    <string name="facebook_client_token">a</string>
+    <string name="facebook_app_id">1523218345024542</string>
+    <string name="fb_login_protocol_scheme">fb1523218345024542</string>
+    <string name="facebook_client_token">15133cc1e29f6f5e6815660c11b20249</string>
 
 </resources>

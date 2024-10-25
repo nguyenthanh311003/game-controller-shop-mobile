@@ -66,12 +66,12 @@ public class OrderDetailActivity extends AppCompatActivity {
 
 
         // Set order status
-//        orderStatusText.setText("Status: " + orderStatus);
-//        if ("success".equals(orderStatus)) {
-//            orderStatusImage.setImageResource(R.drawable.success);
-//        } else {
-//            orderStatusImage.setImageResource(R.drawable.failure);
-//        }
+        orderStatusText.setText("Status: " + orderStatus);
+        if ("success".equals(orderStatus)) {
+            orderStatusImage.setImageResource(R.drawable.success);
+        } else {
+            orderStatusImage.setImageResource(R.drawable.failure);
+        }
 
         // Retrieve order details
         List<OrderDetail> orderDetails = (List<OrderDetail>) getIntent().getSerializableExtra("orderDetails");

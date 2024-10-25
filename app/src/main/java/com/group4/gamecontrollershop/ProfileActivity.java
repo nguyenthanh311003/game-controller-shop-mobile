@@ -90,7 +90,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (userId != null) {
             // Optionally, load more user data using userId
-            Toast.makeText(this, "User ID: " + userId, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "User ID: " + userId, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "No user ID found, please log in.", Toast.LENGTH_SHORT).show();
             // Redirect to login activity if userId is not found

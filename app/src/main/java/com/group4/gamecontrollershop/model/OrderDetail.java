@@ -13,8 +13,13 @@ public class OrderDetail implements Serializable {  // Implement Serializable
     private String phone;
     private String email;
 
+    private String imageUrl; // Add this line
+
+    private String productName;
+
+
     // Constructor with all fields
-    public OrderDetail(int id, int orderId, int userId, int productId, int quantity, double price, String address, String phone, String email) {
+    public OrderDetail(int id, int orderId, int userId, int productId, int quantity, double price, String address, String phone, String email, String imageUrl,String productName) {
         this.id = id;
         this.orderId = orderId;
         this.userId = userId;
@@ -24,6 +29,8 @@ public class OrderDetail implements Serializable {  // Implement Serializable
         this.address = address;
         this.phone = phone;
         this.email = email;
+        this.imageUrl = imageUrl;
+        this.productName = productName;
     }
 
     // Getter and Setter methods
@@ -53,4 +60,16 @@ public class OrderDetail implements Serializable {  // Implement Serializable
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+
+    public String getProductName() { return productName; }
+    public void setProductName(String productName) { this.productName = productName; }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

@@ -124,6 +124,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "address TEXT, " +
             "phone TEXT, " +
             "email TEXT, " +
+            "imageUrl TEXT,"+
+            "productName TEXT,"+
             "FOREIGN KEY(orderId) REFERENCES `Order`(id), " +
             "FOREIGN KEY(userId) REFERENCES User(id), " +
             "FOREIGN KEY(productId) REFERENCES Product(id));";
@@ -512,11 +514,12 @@ public List<Order> getAllOrders(int userId) {
     SQLiteDatabase db = this.getReadableDatabase();
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    // Query to get orders along with order details
+    // Updated SQL query to include product name
     String query = "SELECT o.id, o.totalAmount, o.orderDate, o.status, " +
-            "od.address, od.phone, od.email, od.productId, od.quantity, od.price " + // Get product-specific details
+            "od.address, od.phone, od.email, od.productId, od.quantity, od.price, od.imageUrl, od.productName " + // Join with product to get product name
             "FROM `Order` o " +
             "LEFT JOIN OrderDetail od ON o.id = od.orderId " +
+            "LEFT JOIN Product p ON od.productId = p.id " + // Add join to fetch product name
             "WHERE o.userId = ?";
 
     Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
@@ -539,6 +542,8 @@ public List<Order> getAllOrders(int userId) {
             int productId = cursor.getInt(7);
             int quantity = cursor.getInt(8);
             double price = cursor.getDouble(9);
+            String imageUrl = cursor.getString(10); // Retrieve the image URL
+            String productName = cursor.getString(11); // Retrieve the product name
 
             // Parse order date
             Date orderDate = null;
@@ -559,7 +564,7 @@ public List<Order> getAllOrders(int userId) {
                 List<OrderDetail> orderDetails = new ArrayList<>();
 
                 // Create a new OrderDetail object for the current order
-                OrderDetail orderDetail = new OrderDetail(0, orderId, userId, productId, quantity, price, address, phone, email);
+                OrderDetail orderDetail = new OrderDetail(0, orderId, userId, productId, quantity, price, address, phone, email, imageUrl, productName);
                 orderDetails.add(orderDetail); // Add the first order detail to the list
 
                 // Create a new Order object
@@ -567,7 +572,7 @@ public List<Order> getAllOrders(int userId) {
                 currentOrderId = orderId;  // Update the current order ID
             } else {
                 // Add additional OrderDetail objects if the order ID is the same
-                OrderDetail orderDetail = new OrderDetail(0, orderId, userId, productId, quantity, price, address, phone, email);
+                OrderDetail orderDetail = new OrderDetail(0, orderId, userId, productId, quantity, price, address, phone, email, imageUrl, productName);
                 currentOrder.getOrderDetails().add(orderDetail); // Add to the existing order's details
             }
 
@@ -584,22 +589,65 @@ public List<Order> getAllOrders(int userId) {
     return orderList;
 }
 
-    public void insertOrder(int userId, double totalAmount, Date orderDate, String status) {
+
+
+
+    public void insertOrder(int userId, double totalAmount, String orderDate, String status, List<OrderDetail> orderDetails) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
 
-        // Format the date as a string
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String orderDateString = dateFormat.format(orderDate);
+        // Start transaction
+        db.beginTransaction();
+        try {
+            // Insert order and get generated order ID
+            ContentValues orderValues = new ContentValues();
+            orderValues.put("userId", userId);
+            orderValues.put("totalAmount", totalAmount);
+            orderValues.put("orderDate", orderDate);
+            orderValues.put("status", status);
 
-        values.put("userId", userId);
-        values.put("totalAmount", totalAmount);
-        values.put("orderDate", orderDateString); // Save as string in database
-        values.put("status", status);
+            // Use double quotes to escape the table name
+            long orderId = db.insert("\"Order\"", null, orderValues);
 
-        db.insert("`Order`", null, values);
-        db.close();
+            // Check if order was inserted successfully
+            if (orderId == -1) {
+                throw new Exception("Failed to insert order");
+            }
+
+            // Insert each OrderDetail with the generated orderId
+            for (OrderDetail detail : orderDetails) {
+                ContentValues detailValues = new ContentValues();
+                detailValues.put("orderId", orderId);  // Use generated orderId here
+                detailValues.put("userId", detail.getUserId());
+                detailValues.put("productId", detail.getProductId());
+                detailValues.put("quantity", detail.getQuantity());
+                detailValues.put("price", detail.getPrice());
+                detailValues.put("address", detail.getAddress());
+                detailValues.put("phone", detail.getPhone());
+                detailValues.put("email", detail.getEmail());
+                detailValues.put("imageUrl", detail.getImageUrl()); // Add image URL if needed
+                detailValues.put("productName", detail.getProductName()); // Add product name if needed
+
+                long detailId = db.insert("OrderDetail", null, detailValues);
+                // Optionally check if detail was inserted successfully
+                if (detailId == -1) {
+                    throw new Exception("Failed to insert order detail for product ID: " + detail.getProductId());
+                }
+            }
+
+            // Mark the transaction as successful
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace(); // Handle the error appropriately in your app
+        } finally {
+            // End the transaction
+            db.endTransaction();
+            db.close();
+        }
     }
+
+
+
+
 
     // Cart
     public void insertCartItem(int userId, int productId, int quantity) {

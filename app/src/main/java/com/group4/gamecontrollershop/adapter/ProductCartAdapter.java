@@ -70,19 +70,9 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
 
             btnPlus.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                CartItem cartItem = cartItemList.get(position);
-                cartItem.setQuantity(cartItem.getQuantity() + 1);
-                productQuantity.setText(String.valueOf(cartItem.getQuantity()));
-                if (listener != null) {
-                    listener.onQuantityChanged(position);
-                }
-            });
-
-            btnMinus.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                CartItem cartItem = cartItemList.get(position);
-                if (cartItem.getQuantity() > 1) {
-                    cartItem.setQuantity(cartItem.getQuantity() - 1);
+                if (position != RecyclerView.NO_POSITION) {
+                    CartItem cartItem = cartItemList.get(position);
+                    cartItem.setQuantity(cartItem.getQuantity() + 1);
                     productQuantity.setText(String.valueOf(cartItem.getQuantity()));
                     if (listener != null) {
                         listener.onQuantityChanged(position);
@@ -90,14 +80,30 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
                 }
             });
 
+            btnMinus.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    CartItem cartItem = cartItemList.get(position);
+                    if (cartItem.getQuantity() > 1) {
+                        cartItem.setQuantity(cartItem.getQuantity() - 1);
+                        productQuantity.setText(String.valueOf(cartItem.getQuantity()));
+                        if (listener != null) {
+                            listener.onQuantityChanged(position);
+                        }
+                    }
+                }
+            });
+
             btnRemove.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                if (listener != null) {
-                    listener.onItemRemoved(position);
+                if (position != RecyclerView.NO_POSITION) {
+                    if (listener != null) {
+                        listener.onItemRemoved(position);
+                    }
+                    cartItemList.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, cartItemList.size());
                 }
-                cartItemList.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, cartItemList.size());
             });
         }
 
@@ -114,3 +120,4 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
         }
     }
 }
+

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.group4.gamecontrollershop.R;
 import com.group4.gamecontrollershop.model.OrderDetail;
-import com.bumptech.glide.Glide; // Import Glide for loading images
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -34,16 +34,13 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     public void onBindViewHolder(@NonNull OrderDetailViewHolder holder, int position) {
         OrderDetail orderDetail = orderDetailList.get(position);
 
-        // Set product name and quantity
-        holder.productName.setText("Product ID: " + orderDetail.getProductId()); // Adjust as needed
+        // Set product name using the actual product name
+        holder.productName.setText(orderDetail.getProductName()); // Update this line to get the product name
         holder.productQuantity.setText("Quantity: " + orderDetail.getQuantity());
-
-        // Assuming you have price information in OrderDetail
         holder.productPrice.setText("$" + orderDetail.getPrice());
-        holder.productOldPrice.setText("$" + (orderDetail.getPrice() * 1.75)); // Example for old price
 
-        // Load the product image (ensure you have a valid image URL or resource)
-        String imageUrl = "your_image_url_here"; // Replace with actual image URL or resource
+        // Load the product image using the image URL from the orderDetail
+        String imageUrl = orderDetail.getImageUrl(); // Get the image URL from orderDetail
         Glide.with(holder.itemView.getContext())
                 .load(imageUrl)
                 .into(holder.productImage);
@@ -59,15 +56,13 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         TextView productName;
         TextView productQuantity;
         TextView productPrice;
-        TextView productOldPrice;
 
         public OrderDetailViewHolder(@NonNull View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.product_image);
             productName = itemView.findViewById(R.id.product_name);
-            productQuantity = itemView.findViewById(R.id.product_quantity); // Make sure this matches the XML ID
+            productQuantity = itemView.findViewById(R.id.product_quantity);
             productPrice = itemView.findViewById(R.id.product_price);
-            productOldPrice = itemView.findViewById(R.id.product_old_price);
         }
     }
 }
