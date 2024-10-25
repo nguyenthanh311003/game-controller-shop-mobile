@@ -185,8 +185,12 @@ public class CartActivity extends AppCompatActivity {
                             cartItemList.clear(); // Clear the local cart list
                             productCartAdapter.notifyDataSetChanged(); // Refresh cart RecyclerView
 
+
+                            Intent intent = new Intent("com.group4.gamecontrollershop.ORDER_PLACED");
+                            sendBroadcast(intent);
+
                             // Reload order history or notify order activity (if implemented)
-                            orderList = myDB.getAllOrders(userId);
+                            //orderList = myDB.getAllOrders(userId);
 
                             // Update total price display
                             updateTotalPrice();

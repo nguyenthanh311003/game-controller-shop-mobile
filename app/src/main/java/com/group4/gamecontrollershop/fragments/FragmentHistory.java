@@ -1,8 +1,10 @@
 package com.group4.gamecontrollershop.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -90,5 +92,45 @@ public class FragmentHistory extends Fragment {
         recyclerView.setAdapter(historyAdapter);
 
         return view;
+
+
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        reloadOrderList();
+    }
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        IntentFilter filter = new IntentFilter("com.group4.gamecontrollershop.ORDER_PLACED");
+        getContext().registerReceiver(orderPlacedReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getContext().unregisterReceiver(orderPlacedReceiver);
+    }
+
+    private final BroadcastReceiver orderPlacedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            reloadOrderList(); // Refresh order data when broadcast is received
+        }
+    };
+
+    private void reloadOrderList() {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String userId = sharedPreferences.getString("userId", null);
+
+        if (userId != null) {
+            orderList = myDB.getAllOrders(Integer.parseInt(userId));
+            historyAdapter.updateOrderList(orderList);
+        }
+    }
+
+
 }

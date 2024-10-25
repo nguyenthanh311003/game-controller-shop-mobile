@@ -78,6 +78,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     }
 
 
+    public void updateOrderList(List<Order> newOrderList) {
+        this.orderList = newOrderList;
+        notifyDataSetChanged();
+    }
+
+
     @Override
     public int getItemCount() {
         return orderList.size();
