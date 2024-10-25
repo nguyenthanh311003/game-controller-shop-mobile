@@ -69,9 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (itemId == R.id.mHistory) {
                     viewPager.setCurrentItem(2);
                 } else if (itemId == R.id.mProfile) {
-                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                    startActivity(intent); // Start ProfileActivity
-                    return true; // Return true to indicate the event was handled
+                    viewPager.setCurrentItem(3);
                 }
                 return true;
             }
