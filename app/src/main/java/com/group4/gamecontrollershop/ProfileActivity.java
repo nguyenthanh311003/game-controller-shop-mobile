@@ -138,9 +138,14 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void captureImageFromCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
+        if (checkCameraPermission()) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
+        } else {
+            requestCameraPermission();
+        }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
