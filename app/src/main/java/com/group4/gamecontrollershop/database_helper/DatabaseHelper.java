@@ -146,9 +146,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_ORDER_ITEM);
         db.execSQL(CREATE_TABLE_FAVORITE);
         db.execSQL(CREATE_TABLE_CART);
-
-
-        insertDemoData(db);
     }
 
     @Override
@@ -817,84 +814,84 @@ public List<Order> getAllOrders(int userId) {
 
 
 
-    public void insertDemoData(SQLiteDatabase db) {
-        // Insert demo user
-        ContentValues userValues = new ContentValues();
-        userValues.put("fullname", "John Doe");
-        userValues.put("username", "johndoe");
-        userValues.put("password", "password123");
-        userValues.put("avatarUrl", "https://example.com/avatar.png");
-        userValues.put("address", "123 Main St, Anytown, USA");
-        userValues.put("phone", "1234567890");
-        long userId = db.insert("User", null, userValues);
-
-        // Insert demo brand
-        ContentValues brandValues = new ContentValues();
-        brandValues.put("name", "Sony");
-        long brandId = db.insert("Brand", null, brandValues);
-
-        // Insert demo products
-        ContentValues product1 = new ContentValues();
-        product1.put("name", "PlayStation 5 Controller");
-        product1.put("description", "The latest controller for the PS5");
-        product1.put("imgUrl", "https://example.com/product1.jpg");
-        product1.put("detailImgUrlFirst", "https://example.com/product1_detail1.jpg");
-        product1.put("detailImgUrlSecond", "https://example.com/product1_detail2.jpg");
-        product1.put("detailImgUrlThird", "https://example.com/product1_detail3.jpg");
-        product1.put("oldPrice", 70.00);
-        product1.put("newPrice", 60.00);
-        product1.put("quantity", 10);
-        product1.put("brandId", brandId);
-        product1.put("releaseDate", "2023-10-25");
-        product1.put("status", "available");
-        long productId1 = db.insert("Product", null, product1);
-
-        ContentValues product2 = new ContentValues();
-        product2.put("name", "Xbox Series X Controller");
-        product2.put("description", "The latest controller for the Xbox Series X");
-        product2.put("imgUrl", "https://example.com/product2.jpg");
-        product2.put("detailImgUrlFirst", "https://example.com/product2_detail1.jpg");
-        product2.put("detailImgUrlSecond", "https://example.com/product2_detail2.jpg");
-        product2.put("detailImgUrlThird", "https://example.com/product2_detail3.jpg");
-        product2.put("oldPrice", 65.00);
-        product2.put("newPrice", 55.00);
-        product2.put("quantity", 15);
-        product2.put("brandId", brandId);
-        product2.put("releaseDate", "2023-10-25");
-        product2.put("status", "available");
-        long productId2 = db.insert("Product", null, product2);
-
-        // Insert demo order
-        ContentValues orderValues = new ContentValues();
-        orderValues.put("userId", userId);
-        orderValues.put("totalAmount", 115.00);
-        orderValues.put("orderDate", "2024-10-25");
-        orderValues.put("status", "success");
-        long orderId = db.insert("`Order`", null, orderValues);
-
-        // Insert demo order details
-        ContentValues orderDetail1 = new ContentValues();
-        orderDetail1.put("orderId", orderId);
-        orderDetail1.put("userId", userId);
-        orderDetail1.put("productId", productId1);
-        orderDetail1.put("quantity", 1);
-        orderDetail1.put("price", 60.00);
-        orderDetail1.put("address", "123 Main St, Anytown, USA");
-        orderDetail1.put("phone", "1234567890");
-        orderDetail1.put("email", "johndoe@example.com");
-        db.insert("OrderDetail", null, orderDetail1);
-
-        ContentValues orderDetail2 = new ContentValues();
-        orderDetail2.put("orderId", orderId);
-        orderDetail2.put("userId", userId);
-        orderDetail2.put("productId", productId2);
-        orderDetail2.put("quantity", 1);
-        orderDetail2.put("price", 55.00);
-        orderDetail2.put("address", "123 Main St, Anytown, USA");
-        orderDetail2.put("phone", "1234567890");
-        orderDetail2.put("email", "johndoe@example.com");
-        db.insert("OrderDetail", null, orderDetail2);
-    }
+//    public void insertDemoData(SQLiteDatabase db) {
+//        // Insert demo user
+//        ContentValues userValues = new ContentValues();
+//        userValues.put("fullname", "John Doe");
+//        userValues.put("username", "johndoe");
+//        userValues.put("password", "password123");
+//        userValues.put("avatarUrl", "https://example.com/avatar.png");
+//        userValues.put("address", "123 Main St, Anytown, USA");
+//        userValues.put("phone", "1234567890");
+//        long userId = db.insert("User", null, userValues);
+//
+//        // Insert demo brand
+//        ContentValues brandValues = new ContentValues();
+//        brandValues.put("name", "Sony");
+//        long brandId = db.insert("Brand", null, brandValues);
+//
+//        // Insert demo products
+//        ContentValues product1 = new ContentValues();
+//        product1.put("name", "PlayStation 5 Controller");
+//        product1.put("description", "The latest controller for the PS5");
+//        product1.put("imgUrl", "https://example.com/product1.jpg");
+//        product1.put("detailImgUrlFirst", "https://example.com/product1_detail1.jpg");
+//        product1.put("detailImgUrlSecond", "https://example.com/product1_detail2.jpg");
+//        product1.put("detailImgUrlThird", "https://example.com/product1_detail3.jpg");
+//        product1.put("oldPrice", 70.00);
+//        product1.put("newPrice", 60.00);
+//        product1.put("quantity", 10);
+//        product1.put("brandId", brandId);
+//        product1.put("releaseDate", "2023-10-25");
+//        product1.put("status", "available");
+//        long productId1 = db.insert("Product", null, product1);
+//
+//        ContentValues product2 = new ContentValues();
+//        product2.put("name", "Xbox Series X Controller");
+//        product2.put("description", "The latest controller for the Xbox Series X");
+//        product2.put("imgUrl", "https://example.com/product2.jpg");
+//        product2.put("detailImgUrlFirst", "https://example.com/product2_detail1.jpg");
+//        product2.put("detailImgUrlSecond", "https://example.com/product2_detail2.jpg");
+//        product2.put("detailImgUrlThird", "https://example.com/product2_detail3.jpg");
+//        product2.put("oldPrice", 65.00);
+//        product2.put("newPrice", 55.00);
+//        product2.put("quantity", 15);
+//        product2.put("brandId", brandId);
+//        product2.put("releaseDate", "2023-10-25");
+//        product2.put("status", "available");
+//        long productId2 = db.insert("Product", null, product2);
+//
+//        // Insert demo order
+//        ContentValues orderValues = new ContentValues();
+//        orderValues.put("userId", userId);
+//        orderValues.put("totalAmount", 115.00);
+//        orderValues.put("orderDate", "2024-10-25");
+//        orderValues.put("status", "success");
+//        long orderId = db.insert("`Order`", null, orderValues);
+//
+//        // Insert demo order details
+//        ContentValues orderDetail1 = new ContentValues();
+//        orderDetail1.put("orderId", orderId);
+//        orderDetail1.put("userId", userId);
+//        orderDetail1.put("productId", productId1);
+//        orderDetail1.put("quantity", 1);
+//        orderDetail1.put("price", 60.00);
+//        orderDetail1.put("address", "123 Main St, Anytown, USA");
+//        orderDetail1.put("phone", "1234567890");
+//        orderDetail1.put("email", "johndoe@example.com");
+//        db.insert("OrderDetail", null, orderDetail1);
+//
+//        ContentValues orderDetail2 = new ContentValues();
+//        orderDetail2.put("orderId", orderId);
+//        orderDetail2.put("userId", userId);
+//        orderDetail2.put("productId", productId2);
+//        orderDetail2.put("quantity", 1);
+//        orderDetail2.put("price", 55.00);
+//        orderDetail2.put("address", "123 Main St, Anytown, USA");
+//        orderDetail2.put("phone", "1234567890");
+//        orderDetail2.put("email", "johndoe@example.com");
+//        db.insert("OrderDetail", null, orderDetail2);
+//    }
 
     @SuppressLint("Range")
     public String getUserFullName(int userId) {

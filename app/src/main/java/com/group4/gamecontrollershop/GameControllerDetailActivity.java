@@ -93,6 +93,24 @@ public class GameControllerDetailActivity extends AppCompatActivity {
                 Glide.with(this)
                         .load(product.getDetailImgUrlThird())
                         .into(productImageThird);
+
+                productImageFirst.setOnClickListener(v -> {
+                    Glide.with(this)
+                            .load(product.getDetailImgUrlFirst())
+                            .into(productImage);
+                });
+
+                productImageSecond.setOnClickListener(v -> {
+                    Glide.with(this)
+                            .load(product.getDetailImgUrlSecond())
+                            .into(productImage);
+                });
+
+                productImageThird.setOnClickListener(v -> {
+                    Glide.with(this)
+                            .load(product.getDetailImgUrlThird())
+                            .into(productImage);
+                });
             }
         }
 

@@ -77,17 +77,20 @@ public class FragmentHome extends Fragment {
 
         myDB = new DatabaseHelper(getContext());
 
-//        myDB.insertBrand(xbox);
-//        myDB.insertBrand(sony);
-//        myDB.insertBrand(eightBitDo);
-//        myDB.insertBrand(nintendo);
-//        myDB.insertBrand(razer);
-//        myDB.insertBrand(logitech);
-//        myDB.insertBrand(steelSeries);
-//        myDB.insertBrand(astro);
-//        myDB.insertBrand(thrustmaster);
-//        myDB.insertBrand(hori);
+        List<Brand> brandList = myDB.getActiveBrands();
 
+        if (brandList.isEmpty()) {
+        myDB.insertBrand(xbox);
+        myDB.insertBrand(sony);
+        myDB.insertBrand(eightBitDo);
+        myDB.insertBrand(nintendo);
+        myDB.insertBrand(razer);
+        myDB.insertBrand(logitech);
+        myDB.insertBrand(steelSeries);
+        myDB.insertBrand(astro);
+        myDB.insertBrand(thrustmaster);
+        myDB.insertBrand(hori);
+        }
 //        myDB.deleteAllBrands();
 
         List<Brand> brands = myDB.getActiveBrands();
@@ -169,9 +172,9 @@ public class FragmentHome extends Fragment {
                 "Xbox One X White Controller",
                 "The Xbox One S Controller is an ergonomic game pad designed for Xbox One consoles and Windows PCs. It features Bluetooth connectivity, textured grips, and responsive buttons for a comfortable and precise gaming experience. Customizable settings through the Xbox Accessories app enhance personalization for gamers.",
                 xboxOneXWhiteUrl,
-                xboxOneXWhiteUrl,
-                xboxOneXWhiteUrl,
-                xboxOneXWhiteUrl,
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1xWhite2.jpg?alt=media&token=177af073-20bd-4eb1-a43e-77b63822ff96",
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1xWhite3.jpg?alt=media&token=ec638c91-cd0a-4a14-b0a4-13fcc4942d57",
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1xWhite4.jpg?alt=media&token=c2f2c573-9e9e-44f1-bd0e-d669e7338dff",
                 59.99,
                 19.99,
                 100,
@@ -184,9 +187,9 @@ public class FragmentHome extends Fragment {
                 "Xbox One X Black Controller",
                 "The Xbox One S Controller is an ergonomic game pad designed for Xbox One consoles and Windows PCs. It features Bluetooth connectivity, textured grips, and responsive buttons for a comfortable and precise gaming experience. Customizable settings through the Xbox Accessories app enhance personalization for gamers.",
                 xboxOneXBackUrl,
-                xboxOneXBackUrl,
-                xboxOneXBackUrl,
-                xboxOneXBackUrl,
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x2.jpg?alt=media&token=7d8d86fd-2244-42dc-8c30-9569511cbf21",
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x3.jpg?alt=media&token=57c8ae4c-c09c-473f-a9a8-44a25a4b9ac5",
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x4.jpg?alt=media&token=21a1ae15-b3d1-46c1-931c-444af93aeab8",
                 59.99,
                 9.99,
                 100,
@@ -199,9 +202,9 @@ public class FragmentHome extends Fragment {
                 "Xbox One X Grey Camo Controller",
                 "The Xbox One S Controller is an ergonomic game pad designed for Xbox One consoles and Windows PCs. It features Bluetooth connectivity, textured grips, and responsive buttons for a comfortable and precise gaming experience. Customizable settings through the Xbox Accessories app enhance personalization for gamers.",
                 xboxOneXGreyCamoUrl,
-                xboxOneXGreyCamoUrl,
-                xboxOneXGreyCamoUrl,
-                xboxOneXGreyCamoUrl,
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x2.jpg?alt=media&token=7d8d86fd-2244-42dc-8c30-9569511cbf21",
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x3.jpg?alt=media&token=57c8ae4c-c09c-473f-a9a8-44a25a4b9ac5",
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x4.jpg?alt=media&token=21a1ae15-b3d1-46c1-931c-444af93aeab8",
                 59.99,
                 8.99,
                 100,
@@ -214,9 +217,9 @@ public class FragmentHome extends Fragment {
                 "Xbox One X Blue Camo Controller",
                 "The Xbox One S Controller is an ergonomic game pad designed for Xbox One consoles and Windows PCs. It features Bluetooth connectivity, textured grips, and responsive buttons for a comfortable and precise gaming experience. Customizable settings through the Xbox Accessories app enhance personalization for gamers.",
                 xboxOneXBlueCamoUrl,
-                xboxOneXBlueCamoUrl,
-                xboxOneXBlueCamoUrl,
-                xboxOneXBlueCamoUrl,
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x2.jpg?alt=media&token=7d8d86fd-2244-42dc-8c30-9569511cbf21",
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x3.jpg?alt=media&token=57c8ae4c-c09c-473f-a9a8-44a25a4b9ac5",
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x4.jpg?alt=media&token=21a1ae15-b3d1-46c1-931c-444af93aeab8",
                 59.99,
                 7.99,
                 100,
@@ -229,9 +232,9 @@ public class FragmentHome extends Fragment {
                 "Xbox One X Red Camo Controller",
                 "The Xbox One S Controller is an ergonomic game pad designed for Xbox One consoles and Windows PCs. It features Bluetooth connectivity, textured grips, and responsive buttons for a comfortable and precise gaming experience. Customizable settings through the Xbox Accessories app enhance personalization for gamers.",
                 xboxOneXRedCamoUrl,
-                xboxOneXRedCamoUrl,
-                xboxOneXRedCamoUrl,
-                xboxOneXRedCamoUrl,
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x2.jpg?alt=media&token=7d8d86fd-2244-42dc-8c30-9569511cbf21",
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x3.jpg?alt=media&token=57c8ae4c-c09c-473f-a9a8-44a25a4b9ac5",
+                "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x4.jpg?alt=media&token=21a1ae15-b3d1-46c1-931c-444af93aeab8",
                 59.99,
                 7.99,
                 100,
@@ -242,13 +245,13 @@ public class FragmentHome extends Fragment {
 
         boolean isEmptyProducts = myDB.getActiveProductsBySort(sortStatus).isEmpty();
         if (isEmptyProducts) {
-            myDB.insertProduct(xboxOneSBlack);
-            myDB.insertProduct(xboxOneSWhite);
             myDB.insertProduct(xboxOneXWhite);
             myDB.insertProduct(xboxOneXBlack);
             myDB.insertProduct(xboxOneXBlueCamo);
             myDB.insertProduct(xboxOneXGreyCamo);
             myDB.insertProduct(xboxOneXRedCamo);
+            myDB.insertProduct(xboxOneSBlack);
+            myDB.insertProduct(xboxOneSWhite);
         }
 
 //        myDB.deleteAllProducts();
