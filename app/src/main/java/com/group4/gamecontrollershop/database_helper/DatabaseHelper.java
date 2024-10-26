@@ -217,16 +217,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    ///AAA
     public List<Product> getActiveProducts() {
         List<Product> productList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
+
+        // Add quantity > 0 condition to the query
+        String selection = PRODUCT_COLUMN_STATUS + "=? AND " + PRODUCT_COLUMN_QUANTITY + " > ?";
+        String[] selectionArgs = new String[]{"ACTIVE", "0"};
 
         Cursor cursor = db.query(TABLE_PRODUCT, new String[]{
                         PRODUCT_COLUMN_ID, PRODUCT_COLUMN_NAME, PRODUCT_COLUMN_DESCRIPTION, PRODUCT_COLUMN_IMG_URL,
                         PRODUCT_COLUMN_DETAIL_IMG_URL_FIRST, PRODUCT_COLUMN_DETAIL_IMG_URL_SECOND, PRODUCT_COLUMN_DETAIL_IMG_URL_THIRD,
                         PRODUCT_COLUMN_OLD_PRICE, PRODUCT_COLUMN_NEW_PRICE, PRODUCT_COLUMN_QUANTITY,
                         PRODUCT_COLUMN_BRAND_ID, PRODUCT_COLUMN_RELEASE_DATE, PRODUCT_COLUMN_STATUS},
-                PRODUCT_COLUMN_STATUS + "=?", new String[]{"ACTIVE"}, null, null, null, null);
+                selection, selectionArgs, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -251,10 +256,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return productList;
     }
 
+
+    ///AAA
     public List<Product> getActiveProductsBySort(String sortOrder) {
         List<Product> productList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
+
+        // Add quantity > 0 check to the query
+        String selection = PRODUCT_COLUMN_STATUS + "=? AND " + PRODUCT_COLUMN_QUANTITY + " > ?";
+        String[] selectionArgs = new String[]{"ACTIVE", "0"};
 
         if (sortOrder.equals("ALL")) {
             cursor = db.query(TABLE_PRODUCT, new String[]{
@@ -262,7 +273,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             PRODUCT_COLUMN_DETAIL_IMG_URL_FIRST, PRODUCT_COLUMN_DETAIL_IMG_URL_SECOND, PRODUCT_COLUMN_DETAIL_IMG_URL_THIRD,
                             PRODUCT_COLUMN_OLD_PRICE, PRODUCT_COLUMN_NEW_PRICE, PRODUCT_COLUMN_QUANTITY, PRODUCT_COLUMN_BRAND_ID,
                             PRODUCT_COLUMN_RELEASE_DATE, PRODUCT_COLUMN_STATUS},
-                    PRODUCT_COLUMN_STATUS + "=?", new String[]{"ACTIVE"}, null, null, null, null);
+                    selection, selectionArgs, null, null, null, null);
         } else {
             String orderBy = PRODUCT_COLUMN_NEW_PRICE + " " + sortOrder;
 
@@ -271,7 +282,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             PRODUCT_COLUMN_DETAIL_IMG_URL_FIRST, PRODUCT_COLUMN_DETAIL_IMG_URL_SECOND, PRODUCT_COLUMN_DETAIL_IMG_URL_THIRD,
                             PRODUCT_COLUMN_OLD_PRICE, PRODUCT_COLUMN_NEW_PRICE, PRODUCT_COLUMN_QUANTITY, PRODUCT_COLUMN_BRAND_ID,
                             PRODUCT_COLUMN_RELEASE_DATE, PRODUCT_COLUMN_STATUS},
-                    PRODUCT_COLUMN_STATUS + "=?", new String[]{"ACTIVE"}, null, null, orderBy, null);
+                    selection, selectionArgs, null, null, orderBy, null);
         }
 
         if (cursor != null && cursor.moveToFirst()) {
@@ -309,16 +320,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return productList;
     }
 
+
+    ///AAA
     public List<Product> searchProductsByName(String productName) {
         List<Product> productList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
+
+        // Add quantity > 0 condition to the query
+        String selection = PRODUCT_COLUMN_NAME + " LIKE ? AND " + PRODUCT_COLUMN_QUANTITY + " > ?";
+        String[] selectionArgs = new String[]{"%" + productName + "%", "0"};
 
         Cursor cursor = db.query(TABLE_PRODUCT, new String[]{
                         PRODUCT_COLUMN_ID, PRODUCT_COLUMN_NAME, PRODUCT_COLUMN_DESCRIPTION, PRODUCT_COLUMN_IMG_URL,
                         PRODUCT_COLUMN_DETAIL_IMG_URL_FIRST, PRODUCT_COLUMN_DETAIL_IMG_URL_SECOND, PRODUCT_COLUMN_DETAIL_IMG_URL_THIRD,
                         PRODUCT_COLUMN_OLD_PRICE, PRODUCT_COLUMN_NEW_PRICE, PRODUCT_COLUMN_QUANTITY, PRODUCT_COLUMN_BRAND_ID,
                         PRODUCT_COLUMN_RELEASE_DATE, PRODUCT_COLUMN_STATUS},
-                PRODUCT_COLUMN_NAME + " LIKE ?", new String[]{"%" + productName + "%"}, null, null, null, null);
+                selection, selectionArgs, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -342,6 +359,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return productList;
     }
+
 
     public void deleteAllProducts() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -378,17 +396,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return brandList;
     }
 
+    ///AAA
     public List<Product> getActiveProductsByBrandId(int brandId) {
         List<Product> productList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
+
+        // Add quantity > 0 condition to the query
+        String selection = PRODUCT_COLUMN_STATUS + "=? AND " + PRODUCT_COLUMN_BRAND_ID + "=? AND " + PRODUCT_COLUMN_QUANTITY + " > ?";
+        String[] selectionArgs = new String[]{"ACTIVE", String.valueOf(brandId), "0"};
 
         Cursor cursor = db.query(TABLE_PRODUCT, new String[]{
                         PRODUCT_COLUMN_ID, PRODUCT_COLUMN_NAME, PRODUCT_COLUMN_DESCRIPTION, PRODUCT_COLUMN_IMG_URL,
                         PRODUCT_COLUMN_DETAIL_IMG_URL_FIRST, PRODUCT_COLUMN_DETAIL_IMG_URL_SECOND, PRODUCT_COLUMN_DETAIL_IMG_URL_THIRD,
                         PRODUCT_COLUMN_OLD_PRICE, PRODUCT_COLUMN_NEW_PRICE, PRODUCT_COLUMN_QUANTITY, PRODUCT_COLUMN_BRAND_ID,
                         PRODUCT_COLUMN_RELEASE_DATE, PRODUCT_COLUMN_STATUS},
-                PRODUCT_COLUMN_STATUS + "=? AND " + PRODUCT_COLUMN_BRAND_ID + "=?",
-                new String[]{"ACTIVE", String.valueOf(brandId)}, null, null, null, null);
+                selection, selectionArgs, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -424,6 +446,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return productList;
     }
+
 
     public void deleteAllBrands() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -956,6 +979,20 @@ public List<Order> getAllOrders(int userId) {
         db.close();
     }
 
+    public int getProductQuantity(int productId) {
+        int quantity = 0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_PRODUCT, new String[]{PRODUCT_COLUMN_QUANTITY},
+                PRODUCT_COLUMN_ID + "=?", new String[]{String.valueOf(productId)},
+                null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            quantity = cursor.getInt(0);
+            cursor.close();
+        }
+        db.close();
+        return quantity;
+    }
 
 
 

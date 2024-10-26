@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.group4.gamecontrollershop.R;
+import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
 import com.group4.gamecontrollershop.model.CartItem;
 
 import java.util.List;
@@ -22,8 +23,11 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
     private List<CartItem> cartItemList;
     private OnItemClickListener listener;
 
-    public ProductCartAdapter(List<CartItem> cartItemList) {
+    private DatabaseHelper myDB;
+
+    public ProductCartAdapter(List<CartItem> cartItemList, DatabaseHelper databaseHelper) {
         this.cartItemList = cartItemList;
+        this.myDB = databaseHelper;
     }
 
     public interface OnItemClickListener {
@@ -58,6 +62,8 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
         private TextView productName, productPrice, productQuantity;
         private Button btnPlus, btnMinus, btnRemove;
 
+
+
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             productName = itemView.findViewById(R.id.productName);
@@ -70,15 +76,21 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
 
             btnPlus.setOnClickListener(v -> {
                 int position = getAdapterPosition();
+
+
                 if (position != RecyclerView.NO_POSITION) {
                     CartItem cartItem = cartItemList.get(position);
-                    cartItem.setQuantity(cartItem.getQuantity() + 1);
-                    productQuantity.setText(String.valueOf(cartItem.getQuantity()));
-                    if (listener != null) {
-                        listener.onQuantityChanged(position);
+                    // Check if the current quantity is less than the max quantity
+                    if (cartItem.getQuantity() <  myDB.getProductQuantity(cartItem.getProductId())) {
+                        cartItem.setQuantity(cartItem.getQuantity() + 1);
+                        productQuantity.setText(String.valueOf(cartItem.getQuantity()));
+                        if (listener != null) {
+                            listener.onQuantityChanged(position);
+                        }
                     }
                 }
             });
+
 
             btnMinus.setOnClickListener(v -> {
                 int position = getAdapterPosition();
