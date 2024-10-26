@@ -519,7 +519,7 @@ public List<Order> getAllOrders(int userId) {
             "od.address, od.phone, od.email, od.productId, od.quantity, od.price, od.imageUrl, od.productName " + // Join with product to get product name
             "FROM `Order` o " +
             "LEFT JOIN OrderDetail od ON o.id = od.orderId " +
-            "LEFT JOIN Product p ON od.productId = p.id " + // Add join to fetch product name
+            "LEFT JOIN Product p ON od.productId = p.id " +
             "WHERE o.userId = ?";
 
     Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
@@ -947,6 +947,13 @@ public List<Order> getAllOrders(int userId) {
             }
         }
         return phone;
+    }
+    public void updateProductQuantity(int productId, int newQuantity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("quantity", newQuantity); // Adjust to match your product quantity column name
+        db.update("Product", values, "id = ?", new String[]{String.valueOf(productId)});
+        db.close();
     }
 
 

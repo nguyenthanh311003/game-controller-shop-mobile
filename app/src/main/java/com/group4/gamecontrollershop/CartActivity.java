@@ -178,6 +178,14 @@ public class CartActivity extends AppCompatActivity {
                             // Insert order with order details
                             myDB.insertOrder(userId, totalAmount, orderDate, "success", orderDetails);
 
+
+                            // Reduce product quantities in the database
+                            for (CartItem cartItem : cartItemList) {
+                                int newQuantity = cartItem.getProduct().getQuantity() - cartItem.getQuantity();
+                                myDB.updateProductQuantity(cartItem.getProductId(), newQuantity);
+                            }
+
+
                             // Clear cart items in the database and locally after successful order
                             for (CartItem cartItem : cartItemList) {
                                 myDB.deleteCartItem(userId, cartItem.getProductId());
