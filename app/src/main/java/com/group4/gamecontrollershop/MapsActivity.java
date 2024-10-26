@@ -39,8 +39,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         this.googleMap = googleMap;
-
-        // Set a marker at a specific location (e.g., Sydney, Australia)
         LatLng sydney = new LatLng(-34, 151);
         this.googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));

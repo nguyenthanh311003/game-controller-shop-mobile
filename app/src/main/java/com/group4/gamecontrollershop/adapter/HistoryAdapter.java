@@ -44,7 +44,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
         Order order = orderList.get(position);
-        holder.bind(order);
+        holder.bind(order, position);
 
         // Set an onClickListener to the entire order item
         holder.itemView.setOnClickListener(v -> {
@@ -102,9 +102,32 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             productSummary = itemView.findViewById(R.id.productSummaryText); // New TextView for product summary
         }
 
+//        @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
+//        public void bind(Order order) {
+//            orderId.setText("Order: #" + order.getId());
+//            orderPrice.setText("Amount: $" + order.getTotalAmount());
+//            orderDate.setText("Order at " + dateFormat.format(order.getOrderDate()));
+//
+//            // Set product summary
+//            StringBuilder summaryBuilder = new StringBuilder("Products: ");
+//            List<OrderDetail> orderDetails = order.getOrderDetails();
+//            summaryBuilder.append(orderDetails.size()).append(" item(s)");
+//            productSummary.setText(summaryBuilder.toString());
+//
+//            // Set the order status image
+//            if (ORDER_SUCCESS.equals(order.getStatus())) {
+//                orderStatus.setImageResource(R.drawable.success);
+//            } else {
+//                orderStatus.setImageResource(R.drawable.failure);
+//            }
+//        }
+
         @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
-        public void bind(Order order) {
-            orderId.setText("Order: #" + order.getId());
+        public void bind(Order order, int position) {
+            // Set the order's sequential number instead of ID
+            orderId.setText("Order: #" + (position + 1)); // Display order's sequential number
+
+            // Other binding code remains the same
             orderPrice.setText("Amount: $" + order.getTotalAmount());
             orderDate.setText("Order at " + dateFormat.format(order.getOrderDate()));
 

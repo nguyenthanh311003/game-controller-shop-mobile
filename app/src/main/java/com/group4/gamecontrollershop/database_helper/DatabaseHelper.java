@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -609,9 +610,6 @@ public List<Order> getAllOrders(int userId) {
     return orderList;
 }
 
-
-
-
     public void insertOrder(int userId, double totalAmount, String orderDate, String status, List<OrderDetail> orderDetails) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -665,8 +663,83 @@ public List<Order> getAllOrders(int userId) {
         }
     }
 
-
-
+//    public void insertOrder(int userId, double totalAmount, String orderDate, String status, List<OrderDetail> orderDetails) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//
+//        // Start transaction
+//        db.beginTransaction();
+//        try {
+//            int orderId = generateUniqueOrderId(db); // Generate unique order ID
+//
+//            // Insert order with generated order ID
+//            ContentValues orderValues = new ContentValues();
+//            orderValues.put("orderId", orderId); // Use generated unique order ID
+//            orderValues.put("userId", userId);
+//            orderValues.put("totalAmount", totalAmount);
+//            orderValues.put("orderDate", orderDate);
+//            orderValues.put("status", status);
+//
+//            long insertedOrderId = db.insert("\"Order\"", null, orderValues);
+//
+//            // Check if order was inserted successfully
+//            if (insertedOrderId == -1) {
+//                throw new Exception("Failed to insert order");
+//            }
+//
+//            // Insert each OrderDetail with the generated orderId
+//            for (OrderDetail detail : orderDetails) {
+//                ContentValues detailValues = new ContentValues();
+//                detailValues.put("orderId", orderId);  // Use generated unique orderId
+//                detailValues.put("userId", detail.getUserId());
+//                detailValues.put("productId", detail.getProductId());
+//                detailValues.put("quantity", detail.getQuantity());
+//                detailValues.put("price", detail.getPrice());
+//                detailValues.put("address", detail.getAddress());
+//                detailValues.put("phone", detail.getPhone());
+//                detailValues.put("email", detail.getEmail());
+//                detailValues.put("imageUrl", detail.getImageUrl());
+//                detailValues.put("productName", detail.getProductName());
+//
+//                long detailId = db.insert("OrderDetail", null, detailValues);
+//                // Optionally check if detail was inserted successfully
+//                if (detailId == -1) {
+//                    throw new Exception("Failed to insert order detail for product ID: " + detail.getProductId());
+//                }
+//            }
+//
+//            // Mark the transaction as successful
+//            db.setTransactionSuccessful();
+//        } catch (Exception e) {
+//            e.printStackTrace(); // Handle the error appropriately in your app
+//        } finally {
+//            // End the transaction
+//            db.endTransaction();
+//            db.close();
+//        }
+//    }
+//
+//    // Helper method to generate a unique order ID
+//    private int generateUniqueOrderId(SQLiteDatabase db) {
+//        int orderId;
+//        Random random = new Random();
+//        boolean isUnique;
+//
+//        do {
+//            // Generate a random number (e.g., between 100000 and 999999)
+//            orderId = 100000 + random.nextInt(900000);
+//
+//            // Check if this ID already exists in the Order table
+//            String query = "SELECT COUNT(*) FROM \"Order\" WHERE orderId = ?";
+//            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(orderId)});
+//            cursor.moveToFirst();
+//            int count = cursor.getInt(0);
+//            cursor.close();
+//
+//            isUnique = (count == 0); // Unique if count is 0
+//        } while (!isUnique);
+//
+//        return orderId;
+//    }
 
 
     // Cart
