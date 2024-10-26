@@ -222,7 +222,7 @@ public class FragmentHome extends Fragment {
                 "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x4.jpg?alt=media&token=21a1ae15-b3d1-46c1-931c-444af93aeab8",
                 59.99,
                 7.99,
-                100,
+                4,
                 releaseDate,
                 "ACTIVE",
                 xboxId
@@ -237,11 +237,14 @@ public class FragmentHome extends Fragment {
                 "https://firebasestorage.googleapis.com/v0/b/game-controller-shop-50da9.appspot.com/o/xbox1x4.jpg?alt=media&token=21a1ae15-b3d1-46c1-931c-444af93aeab8",
                 59.99,
                 7.99,
-                100,
+                3,
                 releaseDate,
                 "ACTIVE",
                 xboxId
         );
+
+
+
 
         boolean isEmptyProducts = myDB.getActiveProductsBySort(sortStatus).isEmpty();
         if (isEmptyProducts) {
