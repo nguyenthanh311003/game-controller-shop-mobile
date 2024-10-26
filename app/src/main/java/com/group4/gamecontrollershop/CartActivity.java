@@ -80,7 +80,7 @@ public class CartActivity extends AppCompatActivity {
 
         // Load cart items from the database
         cartItemList = myDB.getCartItems(userId);
-        productCartAdapter = new ProductCartAdapter(cartItemList, myDB); // Pass myDB to the adapter
+        productCartAdapter = new ProductCartAdapter(cartItemList, myDB);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(productCartAdapter);

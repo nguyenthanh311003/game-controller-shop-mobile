@@ -134,11 +134,21 @@ public class GameControllerDetailActivity extends AppCompatActivity {
             SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
             userId = Integer.parseInt(sharedPreferences.getString("userId", "1")); // Default is 1 if not found
 
+            // Get the desired quantity
             int quantity = Integer.parseInt(tvQuantity.getText().toString());
-            myDB.insertCartItem(userId, productId, quantity);
-            Intent intent = new Intent(this, CartActivity.class);
-            startActivity(intent);
-            finish();
+
+            // Check if the product is already in the cart
+            if (myDB.isProductInCart(userId, productId)) {
+                // Show a message to the user that the product is already in the cart
+                Toast.makeText(this, "This product is already in your cart.", Toast.LENGTH_SHORT).show();
+            } else {
+                // Insert the item into the cart
+                myDB.insertCartItem(userId, productId, quantity);
+                // Redirect to CartActivity
+                Intent intent = new Intent(this, CartActivity.class);
+                startActivity(intent);
+                finish();
+            }
         });
 
         int userId = 1; // Get user ID from current user

@@ -241,20 +241,7 @@ public class FragmentHome extends Fragment {
         );
 
 
-        Product testZeroProduct = new Product(
-                " TEST Xbox One X Red Camo Controller",
-                "The Xbox One S Controller is an ergonomic game pad designed for Xbox One consoles and Windows PCs. It features Bluetooth connectivity, textured grips, and responsive buttons for a comfortable and precise gaming experience. Customizable settings through the Xbox Accessories app enhance personalization for gamers.",
-                xboxOneXRedCamoUrl,
-                xboxOneXRedCamoUrl,
-                xboxOneXRedCamoUrl,
-                xboxOneXRedCamoUrl,
-                59.99,
-                7.99,
-                0,
-                releaseDate,
-                "ACTIVE",
-                xboxId
-        );
+
 
         boolean isEmptyProducts = myDB.getActiveProductsBySort(sortStatus).isEmpty();
         if (isEmptyProducts) {
@@ -265,7 +252,6 @@ public class FragmentHome extends Fragment {
             myDB.insertProduct(xboxOneXBlueCamo);
             myDB.insertProduct(xboxOneXGreyCamo);
             myDB.insertProduct(xboxOneXRedCamo);
-            myDB.insertProduct(testZeroProduct);
         }
 
 //        myDB.deleteAllProducts();

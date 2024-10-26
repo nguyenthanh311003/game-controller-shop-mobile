@@ -994,6 +994,19 @@ public List<Order> getAllOrders(int userId) {
         return quantity;
     }
 
+    public boolean isProductInCart(int userId, int productId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM cart WHERE userId = ? AND productId = ?", new String[]{String.valueOf(userId), String.valueOf(productId)});
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+            boolean exists = cursor.getInt(0) > 0; // If count > 0, product exists
+            cursor.close();
+            return exists;
+        }
+
+        return false; // Default return if cursor is null
+    }
 
 
 
