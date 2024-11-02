@@ -29,6 +29,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
 import com.group4.gamecontrollershop.databinding.ActivityProfileBinding;
+import com.group4.gamecontrollershop.model.ChatActivity;
+
 import android.Manifest; // This is necessary for using the Manifest.permission constants
 
 import java.text.SimpleDateFormat;
@@ -78,6 +80,11 @@ public class ProfileActivity extends AppCompatActivity {
         // Set up the sign-out button
         binding.StFifthLayout.setOnClickListener(v -> signOut());
 
+
+        binding.btnChat.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+            startActivity(intent);
+        });
 
         // Set up click listeners for navigation
         binding.BoostButton.setOnClickListener(v -> startActivity(new Intent(ProfileActivity.this, AboutActivity.class)));
@@ -258,6 +265,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Signed out successfully", Toast.LENGTH_SHORT).show();
     }
+
+
+
 }
 
 

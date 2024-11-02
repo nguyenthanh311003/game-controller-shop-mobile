@@ -30,6 +30,7 @@ public class FavoriteActivity extends AppCompatActivity {
     private FavoriteAdapter favoriteAdapter;
     private List<Favorite> favoriteList;
     private ImageView ivBack, ivCart;
+
     private DatabaseHelper myDB;
     private int userId;
 
@@ -53,15 +54,15 @@ public class FavoriteActivity extends AppCompatActivity {
         favoriteList = myDB.getFavoriteList(userId);
 
         if (favoriteList.isEmpty()) {
-            List<Product> products = myDB.getActiveProducts();
-
-            myDB.insertFavorite(userId, products.get(0).getId());
-            myDB.insertFavorite(userId, products.get(1).getId());
-            myDB.insertFavorite(userId, products.get(2).getId());
-            myDB.insertFavorite(userId, products.get(3).getId());
-            myDB.insertFavorite(userId, products.get(4).getId());
-
-            favoriteList = myDB.getFavoriteList(userId);
+//            List<Product> products = myDB.getActiveProducts();
+//
+//            myDB.insertFavorite(userId, products.get(0).getId());
+//            myDB.insertFavorite(userId, products.get(1).getId());
+//            myDB.insertFavorite(userId, products.get(2).getId());
+//            myDB.insertFavorite(userId, products.get(3).getId());
+//            myDB.insertFavorite(userId, products.get(4).getId());
+//
+//            favoriteList = myDB.getFavoriteList(userId);
         }
 
 

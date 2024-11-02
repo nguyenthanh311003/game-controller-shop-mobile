@@ -41,6 +41,7 @@ import com.group4.gamecontrollershop.R;
 import com.group4.gamecontrollershop.SettingActivity;
 import com.group4.gamecontrollershop.database_helper.DatabaseHelper;
 import com.group4.gamecontrollershop.databinding.FragmentProfileBinding;
+import com.group4.gamecontrollershop.model.ChatActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,6 +88,12 @@ public class FragmentProfile extends Fragment {
 
         // Set up the sign-out button
         binding.StFifthLayout.setOnClickListener(v -> signOut());
+
+
+        binding.btnChat.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), ChatActivity.class);
+            startActivity(intent);
+        });
 
         // Set up listeners for navigation
         binding.BoostButton.setOnClickListener(v -> startActivity(new Intent(getContext(), AboutActivity.class)));

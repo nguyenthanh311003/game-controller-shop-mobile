@@ -1,5 +1,6 @@
 package com.group4.gamecontrollershop;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,12 +27,16 @@ public class OrderDetailActivity extends AppCompatActivity {
     private TextView userEmailText;
     private TextView orderStatusText;
     private ImageView orderStatusImage;
+
+    private ImageView ivBack;
+
     private RecyclerView orderProductsRecyclerView; // RecyclerView to display order product details
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail);
+        ivBack = findViewById(R.id.ivBack);
 
         // Bind views
         TextView orderIdText = findViewById(R.id.orderId);
@@ -78,6 +83,13 @@ public class OrderDetailActivity extends AppCompatActivity {
         if (orderDetails != null) {
             setupRecyclerView(orderDetails);
         }
+
+
+        ivBack.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 
     private void setupRecyclerView(List<OrderDetail> orderDetails) {

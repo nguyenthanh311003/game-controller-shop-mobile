@@ -12,11 +12,11 @@
         android:title="Cart"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/action_notifications"
-        android:icon="@drawable/bell_outline"
-        android:title="Notifications"
-        app:showAsAction="always" />
+<!--    <item-->
+<!--        android:id="@+id/action_notifications"-->
+<!--        android:icon="@drawable/bell_outline"-->
+<!--        android:title="Notifications"-->
+<!--        app:showAsAction="always" />-->
 
     <item
         android:id="@+id/action_location"

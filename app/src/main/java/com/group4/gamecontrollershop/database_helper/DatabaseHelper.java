@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.group4.gamecontrollershop.model.Brand;
 import com.group4.gamecontrollershop.model.CartItem;
 import com.group4.gamecontrollershop.model.Favorite;
+import com.group4.gamecontrollershop.model.Message;
 import com.group4.gamecontrollershop.model.Order;
 import com.group4.gamecontrollershop.model.OrderDetail;
 import com.group4.gamecontrollershop.model.Product;
@@ -131,6 +132,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "FOREIGN KEY(userId) REFERENCES User(id), " +
             "FOREIGN KEY(productId) REFERENCES Product(id));";
 
+// Add this in your DatabaseHelper class
+
+    private static final String CREATE_TABLE_MESSAGE = "CREATE TABLE Message (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "senderId INTEGER, " +
+            "receiverId INTEGER, " +
+            "message TEXT, " +
+            "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, " +
+            "FOREIGN KEY(senderId) REFERENCES User(id), " +
+            "FOREIGN KEY(receiverId) REFERENCES User(id));";
+
+
 
 
     public DatabaseHelper(Context context) {
@@ -147,6 +160,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_ORDER_ITEM);
         db.execSQL(CREATE_TABLE_FAVORITE);
         db.execSQL(CREATE_TABLE_CART);
+        db.execSQL(CREATE_TABLE_MESSAGE);
+        insertDemoData(db);
     }
 
     @Override
@@ -910,17 +925,17 @@ public List<Order> getAllOrders(int userId) {
 
 
 
-//    public void insertDemoData(SQLiteDatabase db) {
-//        // Insert demo user
-//        ContentValues userValues = new ContentValues();
-//        userValues.put("fullname", "John Doe");
-//        userValues.put("username", "johndoe");
-//        userValues.put("password", "password123");
-//        userValues.put("avatarUrl", "https://example.com/avatar.png");
-//        userValues.put("address", "123 Main St, Anytown, USA");
-//        userValues.put("phone", "1234567890");
-//        long userId = db.insert("User", null, userValues);
-//
+    public void insertDemoData(SQLiteDatabase db) {
+        // Insert demo user
+        ContentValues userValues = new ContentValues();
+        userValues.put("fullname", "John Doe");
+        userValues.put("username", "johndoe");
+        userValues.put("password", "password123");
+        userValues.put("avatarUrl", "https://example.com/avatar.png");
+        userValues.put("address", "123 Main St, Anytown, USA");
+        userValues.put("phone", "1234567890");
+        long userId = db.insert("User", null, userValues);
+
 //        // Insert demo brand
 //        ContentValues brandValues = new ContentValues();
 //        brandValues.put("name", "Sony");
@@ -987,7 +1002,7 @@ public List<Order> getAllOrders(int userId) {
 //        orderDetail2.put("phone", "1234567890");
 //        orderDetail2.put("email", "johndoe@example.com");
 //        db.insert("OrderDetail", null, orderDetail2);
-//    }
+    }
 
     @SuppressLint("Range")
     public String getUserFullName(int userId) {
@@ -1076,6 +1091,33 @@ public List<Order> getAllOrders(int userId) {
         }
 
         return false; // Default return if cursor is null
+    }
+
+
+    // Method to add message
+    public void insertMessage(int senderId, int receiverId, String message) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("senderId", senderId);
+        values.put("receiverId", receiverId);
+        values.put("message", message);
+        db.insert("Message", null, values);
+    }
+
+    // Method to retrieve messages between two users
+    public List<Message> getMessages(int userId, int otherUserId) {
+        List<Message> messages = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Message WHERE (senderId=? AND receiverId=?) OR (senderId=? AND receiverId=?) ORDER BY timestamp",
+                new String[]{String.valueOf(userId), String.valueOf(otherUserId), String.valueOf(otherUserId), String.valueOf(userId)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                messages.add(new Message(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4)));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return messages;
     }
 
 

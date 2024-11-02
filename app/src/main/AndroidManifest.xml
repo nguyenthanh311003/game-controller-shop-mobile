@@ -21,17 +21,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GameControllerShop"
         tools:targetApi="31">
-
+        <activity
+            android:name=".model.ChatActivity"
+            android:exported="false" />
         <!-- FileProvider declaration -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
-         android:exported="false"
+            android:exported="false"
             android:grantUriPermissions="true">
-        <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
-            android:resource="@xml/file_paths" />
-    </provider>
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <activity
             android:name=".OrderDetailActivity"
@@ -74,7 +76,11 @@
         <activity
             android:name=".FavoriteActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".MapsActivity" />
+
+        <activity
+            android:name=".MapsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".RegisterActivity"
             android:parentActivityName=".LoginActivity" />

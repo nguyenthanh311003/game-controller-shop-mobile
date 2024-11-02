@@ -299,44 +299,15 @@
             android:padding="5dp"
             android:gravity="center_vertical"
             android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/StImage31"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/ic_system_update"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="0dp"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="5dp"
-                android:scaleType="centerCrop"
-                app:tint="@color/black" />
-            <TextView
-                android:id="@+id/St_31"
+            <Button
+                android:id="@+id/btnChat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#444"
-                android:layout_toEndOf="@+id/StImage31"
-                android:layout_marginEnd="15dp"
-                android:text="@string/Lbl_Update"
-                android:gravity="start"
-                android:layout_marginStart="5dp"
-                android:textSize="14sp"
-                android:layout_marginBottom="0dp" />
-            <TextView
-                android:id="@+id/d_31"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#777"
-                android:layout_toEndOf="@+id/StImage31"
-                android:layout_marginEnd="15dp"
                 android:layout_marginTop="25dp"
-                android:text="@string/Lbl_Version_update"
-                android:gravity="start"
-                android:layout_marginStart="5dp"
-                android:textSize="14sp"
-                android:layout_marginBottom="0dp" />
-        </RelativeLayout>
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="0dp"
+                android:text="Chat" />  </RelativeLayout>
+
 
 
         <RelativeLayout

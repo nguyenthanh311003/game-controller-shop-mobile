@@ -169,7 +169,7 @@ public class GameControllerDetailActivity extends AppCompatActivity {
             }
         });
 
-        int userId = 1; // Get user ID from current user
+
         List<Favorite> favoriteList = myDB.getFavoriteList(userId);
         for (Favorite favoriteItem: favoriteList) {
             if (favoriteItem.getProduct().getId() == productId) {
@@ -194,7 +194,11 @@ public class GameControllerDetailActivity extends AppCompatActivity {
                     ivFavorite.setImageResource(isSuccess ? R.drawable.heart_outline : R.drawable.heart_fill);
                 }
             } else {
-                myDB.insertFavorite(1, productId);
+                // Get user ID from SharedPreferences
+                SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                int userIdd = Integer.parseInt(sharedPreferences.getString("userId", "1")); // Default is 1 if not found
+
+                myDB.insertFavorite(userIdd, productId);
                 ivFavorite.setImageResource(R.drawable.heart_fill);
             }
         });
